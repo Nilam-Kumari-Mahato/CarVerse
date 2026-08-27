@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.*;
+import java.sql.*;
 
 /**
  * Servlet implementation class User_registration
@@ -22,20 +24,46 @@ public class User_registration extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
+	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+
+
+		response.setContentType("text/html");
+		PrintWriter pw1 = response.getWriter();
+		String user_name = request.getParameter("n1");
+		String email = request.getParameter("n2");
+		String password = request.getParameter("n3");
+		String contact = request.getParameter("n4");
+		String address = request.getParameter("n5");
+		
+		int num = (int)(Math.random() * 16) + 5;
+		
+		UserIdGenerator user = new UserIdGenerator();
+		String u_id = user.generateUserId(num);
+		
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE" , "CARVERSE" , "manager");
+			Statement stmt = con.createStatement();
+			
+			String q1 =  "INSERT INTO USER_REGISTRATION " +
+		            "(USER_ID, USERNAME, EMAIL, PASSWORD, CONTACT, ADDRESS) " +
+		            "VALUES ('" + u_id + "', '" + user_name + "', '" + email + "', '" +
+		            password + "', '" + contact + "', '" + address + "')";
+			
+			int x = stmt.executeUpdate(q1);
+			
+			if(x>0) {
+				pw1.println("<html><body><h1>Registration Succesful<h1></body></html>");
+			}else {
+				pw1.println("<html><body><h1>Registration not Succesful<h1></body></html>");
+
+			}
+			
+		}catch(Exception e) {
+			pw1.println("<html><body>"+e+"</body></html>");
+		}
+		
 	}
 
 }
