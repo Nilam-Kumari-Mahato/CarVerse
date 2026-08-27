@@ -1,24 +1,33 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Registration Form</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Create account | CarVerse</title>
+<link rel="stylesheet" href="assets/css/carverse.css">
 </head>
+
 <body>
-	<form method="post" action="User_registration">
-		
-        <font color="red"> *</font>User Name : <input type="text" name="n1">
-        <br>
-        <font color="red"> *</font>Email Address : <input type="email" name="n2" >
-        <br>
-       	<font color="red"> *</font>Password : <input type="password" name="n3">
-        <br>
-        <font color="red"> *</font>Contact Number : <input type="number" name="n4">
-        <br>
-        <font color="red"> *</font>Address : <input type="text" name="n5">
-        <br>
-        <input type="submit" value="submit">
-        <input type="reset" value="reset">
-	</form>
+<main class="auth-page">
+<section class="auth-card">
+<div class="auth-copy">
+<a class="brand" href="index.jsp">CARVERSE</a>
+<div class="eyebrow" style="margin-top:58px">Find. Compare. Drive.</div>
+<h1>Make every car choice <span>feel easy.</span></h1>
+<p>Create your CarVerse account to save comparisons, reserve a car, manage payments, maintenance, feedback, and cancellation requests.</p>
+</div>
+
+<form class="auth-form" method="post" action="User_registration">
+<h2>Create your account</h2>
+<p class="sub">Begin your CarVerse journey today.</p>
+<input class="input" type="text" name="n1" placeholder="Full name" required>
+<input class="input" type="email" name="n2" placeholder="Email address" required>
+<input class="input" type="password" name="n3" placeholder="Create password" required><div class="form-row">
+<input class="input" type="tel" name="n4" placeholder="Phone number" required>
+<input class="input" type="text" name="n5" placeholder="City / address" required>
+</div>
+<button class="btn btn-primary" type="submit">Create account →</button>
+<p class="form-note">Already have an account? <a href="login.jsp">Sign in</a></p>
+</form>
+</section>
+</main>
 </body>
 </html>

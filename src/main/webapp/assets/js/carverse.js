@@ -1,0 +1,1 @@
+document.querySelectorAll('[data-toast]').forEach(button=>button.addEventListener('click',()=>{const toast=document.querySelector('.toast');toast.textContent=button.dataset.toast;toast.style.display='block';setTimeout(()=>toast.style.display='none',3000)}));

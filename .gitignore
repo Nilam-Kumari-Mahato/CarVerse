@@ -1,6 +1,10 @@
 # Maven
 target/
 
+# Compiled Java bytecode / local build output
+*.class
+build/classes/
+
 # Eclipse generated files
 .apt_generated
 .factorypath
