@@ -5,13 +5,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.*;
 import java.sql.*;
 
-/**
- * Servlet implementation class User_registration
- */
+
 @WebServlet("/User_registration")
 public class User_registration extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -53,12 +52,19 @@ public class User_registration extends HttpServlet {
 			
 			int x = stmt.executeUpdate(q1);
 			
-			if(x>0) {
-				pw1.println("<html><body><h1>Registration Succesful<h1></body></html>");
-			}else {
-				pw1.println("<html><body><h1>Registration not Succesful<h1></body></html>");
+			if (x > 0) {
+                // *** This is the key part for your question ***
+                HttpSession session = request.getSession(); // creates a new session
+                session.setAttribute("USER_ID", u_id);
+                session.setAttribute("USER_NAME", user_name);
 
-			}
+                response.sendRedirect("index.jsp");
+                // or forward to a "registration successful" page that shows u_id, your choice
+                return;
+            } else {
+                pw1.println("<html><body><h1>Registration not Successful</h1></body></html>");
+            }
+
 			
 		}catch(Exception e) {
 			pw1.println("<html><body>"+e+"</body></html>");
