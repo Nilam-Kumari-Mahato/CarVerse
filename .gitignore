@@ -6,6 +6,9 @@ target/
 build/classes/
 
 # Eclipse generated files
+.classpath
+.project
+.settings/
 .apt_generated
 .factorypath
 
@@ -20,3 +23,8 @@ build/classes/
 
 # Mac
 .DS_Store
+
+node_modules/
+package-lock.json
+package.json
+scripts/
