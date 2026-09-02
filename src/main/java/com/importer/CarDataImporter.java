@@ -28,12 +28,21 @@ public class CarDataImporter {
             // ---------------------------------------------------------
             // 1. Read command-line arguments
             // ---------------------------------------------------------
-
-            String brand = args.length > 0 ? args[0] : null;
-            String limitArgument = args.length > 1 ? args[1] : "10";
-
+        	String pageArgument = args.length > 0 ? args[0] : "1";
+            String brand = args.length > 1 ? args[1] : null;
+            String limitArgument = args.length > 2 ? args[2] : "10";
+             
+            int page;
             int limit;
 
+            try {
+                page = Integer.parseInt(pageArgument);
+            } catch (NumberFormatException e) {
+                throw new RuntimeException(
+                        "Page must be a valid integer."
+                );
+            }
+            
             try {
                 limit = Integer.parseInt(limitArgument);
             } catch (NumberFormatException e) {
@@ -42,7 +51,7 @@ public class CarDataImporter {
                 );
             }
 
-            if (brand == null || brand.isBlank() || limit < 1) {
+            if (brand == null || brand.isBlank() || page < 1 || limit < 1) {
                 throw new RuntimeException(
                         "Usage: CarDataImporter <brand> [limit]"
                 );
@@ -100,6 +109,7 @@ public class CarDataImporter {
                     "get_brand_models",
                     Map.of(
                             "brand", brand,
+                            "page", String.valueOf(page),
                             "limit", String.valueOf(limit)
                     )
             );
