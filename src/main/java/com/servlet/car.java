@@ -1,6 +1,7 @@
 package com.servlet;
 
 public class car {
+    private String carid;
     private String model_name;
     private String brand ;
     private String body_type ;
@@ -9,6 +10,17 @@ public class car {
     private String width ; 
     private String height ;
 
+    public String getCarid() {
+        return carid;
+    }
+
+    public void setCarid(String carid) {
+        this.carid = carid;
+    }
+
+    
+    
+    
     public String getModel_name() {
         return model_name;
     }
