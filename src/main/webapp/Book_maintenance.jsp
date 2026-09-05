@@ -760,6 +760,88 @@
 
 
                 </form>
+                </div>
+                <!-- ======================================================== -->
+            <!-- USER UPDATED FEATURES & MAINTENANCE STATUS UPDATE        -->
+            <!-- ======================================================== -->
+
+            <div class="booking-card" style="margin-top: 35px;">
+
+                <!-- HEADER & STATUS -->
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #edf0ee; padding-bottom: 18px; margin-bottom: 22px;">
+                    <div>
+                        <h2 style="font-size: 22px; color: #263238; margin: 0;">Maintenance Status & Feature Details</h2>
+                        <p style="font-size: 13px; color: #718084; margin-top: 4px;">Ticket ID: <strong>#MNT-101</strong></p>
+                    </div>
+                    <span style="background: #eaf5d1; color: #4f6b0b; font-size: 11px; font-weight: 800; padding: 6px 14px; border-radius: 20px;">
+                        STATUS: IN PROGRESS
+                    </span>
+                </div>
+
+                <!-- USER UPDATED FEATURES LIST -->
+                <div style="background: #fbfcfb; border: 1px solid #e5eae7; border-radius: 10px; padding: 18px 20px; margin-bottom: 25px;">
+                    <h3 style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #607279; margin-bottom: 12px;">
+                        Features Updated By User
+                    </h3>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <div style="background: #ffffff; border: 1px solid #d5ded9; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; color: #2d393d;">
+                            <span style="color: #82b91e; font-weight: 800;">✓</span> Ceramic Brake Pads
+                        </div>
+                        <div style="background: #ffffff; border: 1px solid #d5ded9; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; color: #2d393d;">
+                            <span style="color: #82b91e; font-weight: 800;">✓</span> Sport Alloy Wheels
+                        </div>
+                        <div style="background: #ffffff; border: 1px solid #d5ded9; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; color: #2d393d;">
+                            <span style="color: #82b91e; font-weight: 800;">✓</span> Stage-1 ECU Tuning
+                        </div>
+                        <div style="background: #ffffff; border: 1px solid #d5ded9; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; color: #2d393d;">
+                            <span style="color: #82b91e; font-weight: 800;">✓</span> Synthetic Oil Replacement
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- FORM TO UPDATE STATUS & ADD FEATURES -->
+                <form action="MaintenanceUpdate" method="POST">
+                    <input type="hidden" name="recordId" value="101">
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="status">Update Status</label>
+                            <select id="status" name="status">
+                                <option value="Pending">Pending Inspection</option>
+                                <option value="In Progress" selected>In Progress</option>
+                                <option value="Parts Ordered">Parts Ordered / Awaiting Dispatch</option>
+                                <option value="Testing">Road Test / Diagnostics</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cost">Service & Update Cost ($)</label>
+                            <input type="number" id="cost" name="cost" value="450.00" step="0.01" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newFeatures">Add New Feature / Part Verified</label>
+                        <input type="text" id="newFeatures" name="newFeatures" placeholder="e.g. High-Flow Air Filter, Custom Exhaust">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="technicianNotes">Service / Technician Notes</label>
+                        <textarea id="technicianNotes" name="technicianNotes" rows="4" placeholder="Inspection notes, replacement details...">Brake pads verified at 80% life. Engine diagnostics running normal.</textarea>
+                    </div>
+
+                    <div class="form-footer">
+                        <p class="form-note">
+                            Submitting will update the database status and append new features.
+                        </p>
+                        <button type="submit" class="submit-btn">
+                            Save & Update Record
+                            <span>→</span>
+                        </button>
+                    </div>
+                    </form>
 
             </div>
 
