@@ -33,21 +33,22 @@ public class Maintenance_User extends HttpServlet {
         String lm_date = request.getParameter("lastMaintenance");
         String m_d = request.getParameter("description");
 
-        // Get logged-in user ID from session
-        HttpSession ses = request.getSession();
-        String u_id = (String) ses.getAttribute("USERID");
+        
 
         // Generate Maintenance ID
         MaintenanceIdGenerator ob = new MaintenanceIdGenerator();
         String m_id = ob.generateMaintenanceId();
 
-        // Temporary Car ID
-        String c_id = "D_cid_1";
+        
 
         Connection con = null;
         PreparedStatement ps = null;
 
         try {
+            // Get logged-in user ID from session
+            HttpSession ses = request.getSession();
+            String u_id = (String) ses.getAttribute("USERID");
+            
             // Load Oracle Driver
             Class.forName("oracle.jdbc.driver.OracleDriver");
 
@@ -65,10 +66,10 @@ public class Maintenance_User extends HttpServlet {
 
             // SQL Query
             String sql = "INSERT INTO MAINTENANCE_DETAILS "
-                    + "(MAINTENANCE_ID, USER_ID, CAR_ID, "
+                    + "(MAINTENANCE_ID, USER_ID, "
                     + "CAR_PURCHASED_YEAR, LAST_MAINTENANCE_DATE, "
                     + "CARMODEL, MAINTENANCETYPE, DESCRIPTION) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
             // Create PreparedStatement
             ps = con.prepareStatement(sql);
@@ -76,12 +77,11 @@ public class Maintenance_User extends HttpServlet {
             // Set values
             ps.setString(1, m_id);
             ps.setString(2, u_id);
-            ps.setString(3, c_id);
-            ps.setInt(4, Integer.parseInt(p_year));
-            ps.setTimestamp(5, lastMaintenanceTimestamp);
-            ps.setString(6, c_model);
-            ps.setString(7, m_type);
-            ps.setString(8, m_d);
+            ps.setInt(3, Integer.parseInt(p_year));
+            ps.setTimestamp(4, lastMaintenanceTimestamp);
+            ps.setString(5, c_model);
+            ps.setString(6, m_type);
+            ps.setString(7, m_d);
 
             // Execute INSERT
             int x = ps.executeUpdate();
@@ -118,4 +118,3 @@ public class Maintenance_User extends HttpServlet {
         }
     }
 }
-
