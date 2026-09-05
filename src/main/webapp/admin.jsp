@@ -523,7 +523,7 @@ body {
 
 
 
-        <!-- WELCOME -->
+    <!-- WELCOME -->
 
         <div class="welcome">
 
@@ -549,7 +549,7 @@ body {
 
 
 
-        <!-- MANAGEMENT -->
+    <!-- MANAGEMENT -->
 
         <div class="section">
 
@@ -565,7 +565,7 @@ body {
 
 
 
-        <!-- CARDS -->
+    <!-- CARDS -->
 
         <div class="grid">
 
@@ -706,7 +706,7 @@ body {
             </a>
 
 
-            <a href="Admin?action=maintenance" class="card">
+            <a href="admin_maintenance_update.jsp" class="card">
 
                 <div class="card-number">
                     09
@@ -744,7 +744,7 @@ body {
 
 
 
-        <!-- FOOTER -->
+    <!-- FOOTER -->
 
         <div class="footer">
 
