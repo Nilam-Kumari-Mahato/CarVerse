@@ -1,82 +1,72 @@
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
 <!-- =========================
-     FEEDBACK BUTTON
-========================= -->
-
-<button type="button" class="feedback-btn" onclick="openFeedbackPopup()">
-    💬 Give Feedback
-</button>
-
-<!-- =========================
      FEEDBACK POPUP
 ========================= -->
 
 <div id="feedbackModal" class="feedback-modal">
 
-```
-<div class="feedback-popup">
+    <div class="feedback-popup">
 
-    <!-- Close Button -->
-    <span class="close-btn" onclick="closeFeedbackPopup()">&times;</span>
+        <!-- Close Button -->
+        <span class="close-btn" onclick="closeFeedbackPopup()">&times;</span>
 
-    <h2>Car Feedback</h2>
-    <p>Share your thoughts about this car.</p>
+        <h2>Car Feedback</h2>
+        <p>Share your thoughts about this car.</p>
 
-    <form action="User_feed" method="post">
+        <form action="User_feed" method="post">
 
-        <!-- Car ID can be passed automatically from the specification page -->
-        <input type="hidden" name="carId" value="<%= request.getParameter("carId") %>">
+            <!-- Car ID is set by JS when the popup opens (may be blank for general feedback) -->
+            <input type="hidden" id="hiddenCarId" name="carId" value="">
 
-        <!-- Feedback Title -->
-        <div class="form-group">
-            <label for="title">Feedback Title</label>
+            <!-- Feedback Title -->
+            <div class="form-group">
+                <label for="title">Feedback Title</label>
 
-            <input
-                type="text"
-                id="title"
-                name="title"
-                placeholder="Enter feedback title"
-                required
-                maxlength="100">
-        </div>
-
-
-        <!-- Feedback Content -->
-        <div class="form-group">
-            <label for="content">Your Feedback</label>
-
-            <textarea
-                id="content"
-                name="content"
-                placeholder="Write your feedback here..."
-                required
-                maxlength="1000"></textarea>
-        </div>
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    placeholder="Enter feedback title"
+                    required
+                    maxlength="100">
+            </div>
 
 
-        <!-- Buttons -->
-        <div class="popup-buttons">
+            <!-- Feedback Content -->
+            <div class="form-group">
+                <label for="content">Your Feedback</label>
 
-            <button
-                type="button"
-                class="cancel-btn"
-                onclick="closeFeedbackPopup()">
-                Cancel
-            </button>
+                <textarea
+                    id="content"
+                    name="content"
+                    placeholder="Write your feedback here..."
+                    required
+                    maxlength="1000"></textarea>
+            </div>
 
-            <button
-                type="submit"
-                class="submit-btn">
-                Submit Feedback
-            </button>
 
-        </div>
+            <!-- Buttons -->
+            <div class="popup-buttons">
 
-    </form>
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    onclick="closeFeedbackPopup()">
+                    Cancel
+                </button>
 
-</div>
-```
+                <button
+                    type="submit"
+                    class="submit-btn">
+                    Submit Feedback
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
 
 </div>
 
@@ -97,6 +87,7 @@
         font-weight: 600;
         cursor: pointer;
         transition: 0.3s;
+        white-space: nowrap;
     }
 
     .feedback-btn:hover {
@@ -112,7 +103,6 @@
         z-index: 9999;
         left: 0;
         top: 0;
-
         width: 100%;
         height: 100%;
 
@@ -354,9 +344,10 @@
 
 <script>
 
-    function openFeedbackPopup() {
+    function openFeedbackPopup(carId) {
 
         document.getElementById("feedbackModal").style.display = "flex";
+        document.getElementById("hiddenCarId").value = carId || "";
 
     }
 

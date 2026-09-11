@@ -3,6 +3,7 @@ package com.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
+import java.util.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -26,6 +27,7 @@ public class view_profile extends HttpServlet {
         PrintWriter pw1 = response.getWriter();
 
         load_user user = null;
+        List<BookingDetail> bookingList = new ArrayList<>();
 
         try {
             HttpSession ses = request.getSession(false); // don't create a new session if none exists
@@ -43,6 +45,10 @@ public class view_profile extends HttpServlet {
 
                 String q1 = "SELECT * FROM USER_REGISTRATION WHERE USER_ID = ?";
 
+                String q2 = "SELECT booking_id, user_id, car_id, pickup_location, drop_location, total_amount FROM BOOKING_DETAILS "
+                           + "WHERE user_id = ?";
+
+                // ---- Fetch user profile ----
                 try (PreparedStatement pstmt = con.prepareStatement(q1)) {
                     pstmt.setString(1, u_id);
 
@@ -58,6 +64,24 @@ public class view_profile extends HttpServlet {
                         }
                     }
                 }
+
+                // ---- Fetch booked car details ----
+                try (PreparedStatement pstmt2 = con.prepareStatement(q2)) {
+                    pstmt2.setString(1, u_id);
+
+                    try (ResultSet rs2 = pstmt2.executeQuery()) {
+                        while (rs2.next()) {
+                            BookingDetail bd = new BookingDetail();
+                            bd.setBookingId(rs2.getString("booking_id"));
+                            bd.setUserId(rs2.getString("user_id"));
+                            bd.setCarId(rs2.getString("car_id"));
+                            bd.setPickupLocation(rs2.getString("pickup_location"));
+                            bd.setDropLocation(rs2.getString("drop_location"));
+                            bd.setTotalAmount(rs2.getDouble("total_amount"));
+                            bookingList.add(bd);
+                        }
+                    }
+                }
             }
         } catch (Exception e) {
             pw1.println(e);
@@ -65,6 +89,7 @@ public class view_profile extends HttpServlet {
         }
 
         request.setAttribute("user", user);
+        request.setAttribute("bookings", bookingList);
         request.getRequestDispatcher("profile_view.jsp").forward(request, response);
     }
 

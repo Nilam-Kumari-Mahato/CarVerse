@@ -30,6 +30,7 @@
     <title>
         <%= car != null ? fullName + " | CarVerse | Reserve" : "Reserve Car | CarVerse" %>
     </title>
+    <link rel="stylesheet" href="assets/css/carverse.css">
 
     <style>
 
@@ -496,37 +497,31 @@
 
 <!-- ================= NAVBAR ================= -->
 
-<nav class="navbar">
+<nav class="nav">
+    <div class="shell">
 
-    <a href="index.jsp" class="logo">
-        CAR<span>VERSE</span>
-    </a>
+        <a class="brand" href="index.jsp">CARVERSE</a>
 
+        <div class="navlinks">
+            <a href="index.jsp">Explore</a>
+            <a class="active" href="<%= request.getContextPath() %>/car-search">New Cars</a>
+            <a href="compare.jsp">Compare</a>
+            <a href="index.jsp#ownership">Ownership</a>
+        </div>
 
-    <ul class="nav-links">
-
-        <li>
-            <a href="index.jsp">Home</a>
-        </li>
-
-        <li>
-            <a href="<%= request.getContextPath() %>/car-search">Cars</a>
-        </li>
-
-        <li>
-            <a href="Maintenance.jsp">Maintenance</a>
-        </li>
-
-        <li>
-            <%
+          <%
                 String userName = (String) session.getAttribute("USERNAME");
-                String userId   = (String) session.getAttribute("USERID");
+                String userId = (String) session.getAttribute("USERID");
 
                 if (userName == null || userId == null) {
             %>
 
                 <!-- User is not logged in -->
-                <a class="logo btn-outline" href="login.html" style="font-size:11px;">Sign in</a>
+                <a class="btn btn-outline" href="login.html">Sign in</a>
+
+                <a class="btn btn-primary" href="user_registration.html">
+                    Sign up →
+                </a>
 
             <%
                 } else {
@@ -540,11 +535,10 @@
             <%
                 }
             %>
-        </li>
 
-    </ul>
-
+    </div>
 </nav>
+
 
 
 
