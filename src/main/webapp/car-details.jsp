@@ -30,7 +30,8 @@
                         <%= car !=null ? fullName + " | CarVerse" : "Car Details | CarVerse" %>
                     </title>
 
-                    <link rel="stylesheet" href="assets/css/carverse.css">
+                    <link rel="stylesheet" href="assets/css/common.css">
+                    <link rel="stylesheet" href="assets/css/car-details.css">
                     <!-- Splide.js — lightweight image carousel library -->
                     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide-core.min.css">
                 </head>

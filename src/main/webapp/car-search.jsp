@@ -75,7 +75,8 @@
 
                         <title>Search cars | CarVerse</title>
 
-                        <link rel="stylesheet" href="assets/css/carverse.css">
+                        <link rel="stylesheet" href="assets/css/common.css">
+                        <link rel="stylesheet" href="assets/css/car-search.css">
 
 
                     </head>
