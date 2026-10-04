@@ -10,7 +10,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Maintenance Page</title>
-        <link rel="stylesheet" href="assets/css/carverse.css">
+        <link rel="stylesheet" href="assets/css/common.css">
         <style>
 
         /* =========================

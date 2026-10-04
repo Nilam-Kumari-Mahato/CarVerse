@@ -1,0 +1,447 @@
+/* =============================================================
+   CARVERSE - CAR SEARCH PAGE (car-search.jsp)
+   ============================================================= */
+
+.search-page {
+  padding: 28px 0 78px;
+}
+
+.breadcrumbs {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0 0 28px;
+}
+
+.breadcrumbs a:hover,
+.text-link {
+  color: #4d920b;
+  font-weight: 800;
+}
+
+.search-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  margin-bottom: 26px;
+}
+
+.search-heading h1 {
+  font-size: 42px;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin: 9px 0 10px;
+}
+
+.search-heading h1 em {
+  font-style: normal;
+  color: #65a914;
+}
+
+.search-heading p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.search-count {
+  min-width: 116px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: var(--mint);
+  text-align: center;
+}
+
+.search-count strong {
+  font-size: 23px;
+  display: block;
+}
+
+.search-count span {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.search-query {
+  background: var(--deep);
+  padding: 17px;
+  border-radius: 13px;
+  margin-bottom: 27px;
+  box-shadow: var(--shadow);
+}
+
+.search-form {
+  display: flex;
+  gap: 10px;
+}
+
+.search-input {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex: 1;
+  background: #fff;
+  border-radius: 7px;
+  padding: 0 13px;
+  color: #658074;
+}
+
+.search-input input {
+  border: 0;
+  outline: 0;
+  padding: 14px 0;
+  width: 100%;
+  font: inherit;
+  background: transparent;
+}
+
+.search-form select,
+.sort-control select {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 0 34px 0 12px;
+  color: var(--ink);
+  font: inherit;
+  background: #fff;
+}
+
+.servlet-note {
+  margin: 11px 4px 0;
+  color: #b8cbbf;
+  font-size: 12px;
+}
+
+.servlet-note span {
+  color: var(--green);
+}
+
+.servlet-note code {
+  color: #ecf6e8;
+}
+
+.results-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.results-toolbar strong {
+  font-size: 19px;
+}
+
+.results-toolbar span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.sort-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.sort-control select {
+  height: 38px;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.search-layout {
+  display: grid;
+  grid-template-columns: 244px minmax(0, 1fr);
+  gap: 22px;
+}
+
+.filter-panel {
+  height: max-content;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 19px;
+}
+
+.filter-title {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 15px;
+}
+
+.filter-title button {
+  border: 0;
+  background: transparent;
+  color: #579315;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.filter-panel details {
+  border-top: 1px solid var(--line);
+  padding: 17px 0 4px;
+}
+
+.filter-panel summary {
+  font-weight: 800;
+  cursor: pointer;
+  margin-bottom: 11px;
+  list-style: none;
+}
+
+.filter-panel summary:after {
+  content: '+';
+  float: right;
+  color: #599416;
+}
+
+.filter-panel details[open] summary:after {
+  content: '−';
+}
+
+.filter-panel label {
+  display: block;
+  color: #596b62;
+  font-size: 13px;
+  margin: 11px 0;
+  cursor: pointer;
+}
+
+.filter-panel input {
+  accent-color: #6bab19;
+  margin: 0 8px 0 0;
+}
+
+.active-chips {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 13px;
+}
+
+.filter-chip {
+  border: 1px solid #afd275;
+  background: var(--mint);
+  color: #31501d;
+  border-radius: 99px;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.filter-chip span {
+  font-size: 16px;
+  line-height: 8px;
+  margin-left: 5px;
+}
+
+.search-results {
+  display: grid;
+  gap: 15px;
+}
+
+.result-card {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  overflow: hidden;
+  transition: .2s;
+}
+
+.result-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.result-image {
+  position: relative;
+  min-height: 218px;
+}
+
+.result-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(13, 27, 22, .86);
+  color: var(--green);
+  border-radius: 4px;
+  padding: 5px 7px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+
+.result-content {
+  padding: 18px 19px;
+}
+
+.result-title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.result-title h2 {
+  font-size: 20px;
+  letter-spacing: -.6px;
+  margin: 0 0 5px;
+}
+
+.result-title p,
+.emi {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.heart {
+  border: 1px solid var(--line);
+  background: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 21px;
+  cursor: pointer;
+  color: #456154;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.heart:hover {
+  border-color: #ffb3c1;
+  color: #e63946;
+}
+
+.heart.active {
+  background: #fff0f3;
+  border-color: #ffccd5;
+  color: #e63946;
+}
+
+.card-price {
+  font-size: 19px;
+  font-weight: 900;
+  margin-top: 17px;
+}
+
+.card-price sup {
+  font-size: 10px;
+}
+
+.emi {
+  margin-top: 4px;
+}
+
+.result-specs {
+  display: flex;
+  gap: 17px;
+  color: #52665c;
+  font-size: 12px;
+  margin: 16px 0;
+}
+
+.card-actions {
+  border-top: 1px solid var(--line);
+  padding-top: 13px;
+  display: flex;
+  gap: 20px;
+}
+
+.card-actions a {
+  color: #4f8f10;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 27px;
+}
+
+.pagination button {
+  height: 35px;
+  min-width: 35px;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 6px;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pagination .active {
+  background: var(--deep);
+  border-color: var(--deep);
+  color: #fff;
+}
+
+.pagination .page-arrow:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  color: var(--muted);
+  padding: 0 3px;
+}
+
+@media(max-width:800px) {
+  .search-heading,
+  .results-toolbar {
+    align-items: flex-start;
+    gap: 14px;
+    flex-direction: column;
+  }
+
+  .search-heading h1 {
+    font-size: 35px;
+  }
+
+  .search-form {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .search-form select {
+    height: 45px;
+  }
+
+  .search-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-panel {
+    display: none;
+  }
+
+  .result-card {
+    grid-template-columns: 1fr;
+  }
+
+  .result-image {
+    height: 200px;
+  }
+
+  .result-specs {
+    gap: 9px;
+    flex-wrap: wrap;
+  }
+}

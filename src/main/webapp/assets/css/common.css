@@ -1,0 +1,163 @@
+/* =============================================================
+   CARVERSE - COMMON / BASE STYLES
+   Design Tokens, Resets, Global Shell, Navbar, Buttons, Footer, Toast
+   ============================================================= */
+
+:root {
+  --ink: #10211c;
+  --muted: #6a7a73;
+  --green: #a9e82c;
+  --deep: #11241d;
+  --mint: #eaf6df;
+  --line: #dce6dd;
+  --white: #fff;
+  --shadow: 0 18px 45px rgba(20, 47, 37, .12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: #f7faf6;
+  font-family: Inter, Segoe UI, Arial, sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.shell {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 10px;
+}
+
+/* ── Global Navigation ── */
+.nav {
+  height: 78px;
+  background: rgba(255, 255, 255, .88);
+  border-bottom: 1px solid rgba(220, 230, 221, .8);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(16px);
+}
+
+.nav .shell {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 34px;
+}
+
+.brand {
+  font-size: 23px;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.brand b {
+  color: #65a914;
+}
+
+.brand:before {
+  content: '◢';
+  display: inline-block;
+  margin-right: 7px;
+  color: var(--green);
+  transform: rotate(45deg);
+}
+
+.navlinks {
+  display: flex;
+  gap: 25px;
+  font-size: 14px;
+  font-weight: 700;
+  flex: 1;
+}
+
+.navlinks a:hover,
+.navlinks a.active {
+  color: #4d920b;
+}
+
+/* ── Global Buttons ── */
+.btn {
+  border: 0;
+  border-radius: 7px;
+  padding: 13px 19px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 800;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btn-primary {
+  background: var(--green);
+  color: #10211c;
+}
+
+.btn-dark {
+  background: var(--deep);
+  color: #fff;
+}
+
+.btn-outline {
+  border: 1px solid #759083;
+  background: transparent;
+  color: var(--ink);
+}
+
+/* ── Global Toast ── */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #10211c;
+  color: white;
+  padding: 14px 18px;
+  border-left: 4px solid var(--green);
+  border-radius: 7px;
+  display: none;
+  z-index: 50;
+}
+
+/* ── Global Footer ── */
+.footer {
+  background: #0d1b16;
+  color: #d4ddd7;
+  padding: 42px 0;
+  font-size: 13px;
+}
+
+.footer .shell {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+.footer .brand {
+  color: white;
+}
+
+/* ── Global Responsive ── */
+@media(max-width:800px) {
+  .navlinks {
+    display: none;
+  }
+
+  .footer .shell {
+    flex-direction: column;
+  }
+}

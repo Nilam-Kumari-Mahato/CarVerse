@@ -1,0 +1,101 @@
+/* =============================================================
+   CARVERSE - AUTHENTICATION PAGES (login, registration)
+   ============================================================= */
+
+.auth-page {
+  min-height: 100vh;
+  background: linear-gradient(115deg, rgba(10, 26, 19, .76), rgba(18, 46, 33, .55)), url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1800&q=85') center/cover;
+  display: grid;
+  place-items: center;
+  padding: 30px;
+}
+
+.auth-card {
+  width: min(940px, 100%);
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  border: 1px solid rgba(255, 255, 255, .32);
+  border-radius: 21px;
+  overflow: hidden;
+  background: rgba(245, 252, 245, .14);
+  backdrop-filter: blur(17px);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, .28);
+}
+
+.auth-copy {
+  color: white;
+  padding: 58px;
+}
+
+.auth-copy h1 {
+  font-size: 47px;
+  line-height: 1;
+  margin: 15px 0;
+}
+
+.auth-copy h1 span {
+  color: var(--green);
+}
+
+.auth-copy p {
+  max-width: 300px;
+  line-height: 1.6;
+  color: #dfebe2;
+}
+
+.auth-form {
+  background: rgba(255, 255, 255, .93);
+  padding: 45px;
+}
+
+.auth-form h2 {
+  font-size: 30px;
+  margin: 0 0 6px;
+}
+
+.input {
+  width: 100%;
+  border: 1px solid #d7e1d9;
+  border-radius: 7px;
+  padding: 13px;
+  margin-top: 15px;
+  font: inherit;
+  outline-color: #8bd024;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.auth-form .btn {
+  width: 100%;
+  margin-top: 19px;
+}
+
+.form-note {
+  font-size: 13px;
+  color: #64736b;
+  margin-top: 18px;
+  text-align: center;
+}
+
+.form-note a {
+  color: #518c13;
+  font-weight: 800;
+}
+
+@media(max-width:800px) {
+  .auth-card {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-copy {
+    padding: 38px;
+  }
+
+  .auth-form {
+    padding: 30px;
+  }
+}

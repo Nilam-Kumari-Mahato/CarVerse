@@ -112,7 +112,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Compare Cars | CarVerse</title>
-  <link rel="stylesheet" href="assets/css/carverse.css">
+  <link rel="stylesheet" href="assets/css/common.css">
+  <link rel="stylesheet" href="assets/css/compare.css">
   <style>
     /* ── Compare Page Specific UI Styles ── */
     .compare-container {

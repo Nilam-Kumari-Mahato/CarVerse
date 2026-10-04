@@ -6,7 +6,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Business Profile | CarVerse</title>
-  <link rel="stylesheet" href="assets/css/carverse.css">
+  <link rel="stylesheet" href="assets/css/common.css">
   <style>
     .bp-page { padding: 48px 0 80px; }
     .bp-hero  { background: var(--deep); color: #fff; padding: 44px 0 40px; }

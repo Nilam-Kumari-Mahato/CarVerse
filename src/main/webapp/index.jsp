@@ -9,7 +9,8 @@
 
     <title>CarVerse | Find your drive</title>
 
-    <link rel="stylesheet" href="assets/css/carverse.css">
+    <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/home.css">
 </head>
 
 <body>
@@ -52,11 +53,6 @@
             <%
                 }
             %>
-
-            <!-- Book Maintenance Button -->
-            <a class="btn btn-primary" href="Book_maintenance.jsp">
-                Book Maintenance →
-            </a>
 
         </div>
     </nav>
@@ -103,14 +99,8 @@
 
         <div class="shell search-panel">
 
-            <strong>Find your perfect match</strong>
-
             <div class="field grow">
                 ⌕ Search brand, model or body type
-            </div>
-
-            <div class="field">
-                Budget: Any
             </div>
 
             <a class="btn btn-primary" href="car-search.jsp">

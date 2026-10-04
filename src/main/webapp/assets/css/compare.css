@@ -1,0 +1,85 @@
+/* =============================================================
+   CARVERSE - CAR COMPARISON PAGE (compare.jsp)
+   ============================================================= */
+
+.compare-page {
+  padding: 52px 0;
+}
+
+.compare-top {
+  background: var(--deep);
+  color: white;
+  padding: 52px 0;
+}
+
+.compare-cars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 17px;
+  margin-top: 24px;
+}
+
+.compare-car {
+  background: #fff;
+  color: var(--ink);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.compare-car img {
+  width: 100%;
+  height: 145px;
+  object-fit: cover;
+}
+
+.compare-car div {
+  padding: 15px;
+}
+
+.spec-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+
+.spec-table th,
+.spec-table td {
+  padding: 16px;
+  background: #fff;
+  text-align: left;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.spec-table th {
+  width: 25%;
+  border-left: 1px solid var(--line);
+  border-radius: 8px 0 0 8px;
+}
+
+.spec-table td:last-child {
+  border-right: 1px solid var(--line);
+  border-radius: 0 8px 8px 0;
+}
+
+.compare-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 24px 0;
+}
+
+@media(max-width:800px) {
+  .compare-cars {
+    grid-template-columns: 1fr;
+  }
+
+  .spec-table {
+    font-size: 12px;
+  }
+
+  .spec-table th,
+  .spec-table td {
+    padding: 10px;
+  }
+}

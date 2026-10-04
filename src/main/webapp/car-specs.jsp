@@ -30,7 +30,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= car != null ? modelDisplayName + " Specifications | CarVerse" : "Car Specifications | CarVerse" %></title>
     <meta name="description" content="Full technical specifications for the <%= modelDisplayName %>. Dimensions, engine, transmission, suspension, brakes and more.">
-    <link rel="stylesheet" href="assets/css/carverse.css">
+    <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/car-specs.css">
 </head>
 
 <body>

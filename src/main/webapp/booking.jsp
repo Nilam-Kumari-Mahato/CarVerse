@@ -30,7 +30,7 @@
     <title>
         <%= car != null ? fullName + " | CarVerse | Reserve" : "Reserve Car | CarVerse" %>
     </title>
-    <link rel="stylesheet" href="assets/css/carverse.css">
+    <link rel="stylesheet" href="assets/css/common.css">
 
     <style>
 

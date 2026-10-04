@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Business Dashboard | CarVerse</title>
-  <link rel="stylesheet" href="assets/css/carverse.css">
+  <link rel="stylesheet" href="assets/css/common.css">
   <style>
     /* ── Dashboard layout ──────────────────────────────────────────────── */
     .dash-page   { padding: 52px 0 80px; }
