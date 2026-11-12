@@ -330,14 +330,14 @@
         <!-- ── Submit ──────────────────────────────────────────────────── -->
         <div class="submit-row">
           <button class="btn btn-primary" type="submit">
-            Register Business Partner &nbsp;→
+            Register Business Partner &nbsp;
           </button>
           <p class="form-note">
             Already have a business account?
             <a href="business-login.jsp">Sign in here</a>
           </p>
           <p class="form-note">
-            <a href="index.jsp">← Back to CarVerse home</a>
+            <a href="index.jsp">← Back to Home</a>
           </p>
         </div>
 

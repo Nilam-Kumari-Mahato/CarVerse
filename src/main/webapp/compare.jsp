@@ -480,7 +480,6 @@
        ========================================================= -->
   <section class="compare-hero">
     <div class="shell">
-      <div class="eyebrow">Car Comparison</div>
       <h1>Compare <span>Cars</span></h1>
       <p>Select up to 4 models to compare prices, performance, dimensions, and specifications.</p>
     </div>
@@ -559,8 +558,8 @@
                       <% for (CarModel cm : entry.getValue()) {
                            boolean isSelected = (cm.getCarId() == selectedCarId);
                       %>
-                        <option value="<%= cm.getCarId() %>" <%= isSelected ? "selected" : "" %>>
-                          <%= cm.getBrand() %> <%= cm.getModelName() %>
+                        <option value="<%= cm.getCarId() %>" <%= isSelected ? "selected" : "" %> >
+                          <%= cm.getModelName() %>
                         </option>
                       <% } %>
                     </optgroup>

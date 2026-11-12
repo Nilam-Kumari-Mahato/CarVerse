@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.io.IOException;
+
 import java.io.*;
 import java.sql.*;
 
@@ -20,7 +20,6 @@ public class User_registration extends HttpServlet {
      */
     public User_registration() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	
@@ -53,13 +52,15 @@ public class User_registration extends HttpServlet {
 			int x = stmt.executeUpdate(q1);
 			
 			if (x > 0) {
-                // *** This is the key part for your question ***
+                
                 HttpSession session = request.getSession(); // creates a new session
                 session.setAttribute("USER_ID", u_id);
                 session.setAttribute("USER_NAME", user_name);
+				session.setAttribute("USERID", u_id);
+                session.setAttribute("USERNAME", user_name);
+
 
                 response.sendRedirect("index.jsp");
-                // or forward to a "registration successful" page that shows u_id, your choice
                 return;
             } else {
                 pw1.println("<html><body><h1>Registration not Successful</h1></body></html>");

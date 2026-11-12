@@ -511,11 +511,6 @@
         <div class="profile-details">
 
             <div class="detail">
-                <div class="detail-label">User ID</div>
-                <div class="detail-value"><%= user.getU_id() %></div>
-            </div>
-
-            <div class="detail">
                 <div class="detail-label">Email</div>
                 <div class="detail-value"><%= user.getU_email() %></div>
             </div>
@@ -528,11 +523,6 @@
             <div class="detail">
                 <div class="detail-label">Address</div>
                 <div class="detail-value"><%= user.getU_add() %></div>
-            </div>
-
-            <div class="detail">
-                <div class="detail-label">Joined On</div>
-                <div class="detail-value"><%= user.getU_createdat() %></div>
             </div>
 
         </div>
