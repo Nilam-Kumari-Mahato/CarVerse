@@ -530,7 +530,7 @@
                 <a class="active" href="index.jsp">Explore</a>
                 <a href="car-search.jsp">New Cars</a>
                 <a href="compare.jsp">Compare</a>
-                <a href="#ownership">Ownership</a>
+                <a href="Book_maintenance.jsp">Maintenance</a>
             </div>
 
             <%
@@ -560,11 +560,6 @@
                 }
             %>
 
-            <!-- Book Maintenance Button -->
-            <a class="btn btn-primary" href="Book_maintenance.jsp">
-                Book Maintenance →
-            </a>
-
         </div>
     </nav>
             
@@ -584,7 +579,7 @@
                 </p>
 
                 <h1>
-                    Book Your Maintenance
+                    Book Your Car Maintenance
                 </h1>
 
                 <p>
@@ -733,7 +728,6 @@
                             name="description"
                             rows="6"
                             placeholder="Tell us about any issues, unusual sounds, warning lights, or maintenance requirements..."
-                            required
                         ></textarea>
 
                     </div>
@@ -747,24 +741,11 @@
                             Our team will review your request and get back to you.
                         </p>
 
-
-                        <button type="submit" class="submit-btn">
-
-                            Book Maintenance
-
-                            <span>→</span>
-
-                        </button>
-
+                        <button type="submit" class="submit-btn">Book Maintenance</button>
                     </div>
-
                 </form>
-
             </div>
-
         </section>
-
     </main>
-        
     </body>
 </html>

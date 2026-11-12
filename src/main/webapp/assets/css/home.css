@@ -1,6 +1,6 @@
 /* =============================================================
    CARVERSE - HOME / LANDING PAGE (index.jsp)
-   Hero, Search Panel, Featured Grid, Flow, Compare Strip
+   Hero, Featured Grid, Flow, Compare Strip
    ============================================================= */
 
 .hero {
@@ -22,6 +22,48 @@
 .hero .shell {
   position: relative;
   width: 100%;
+  display: flex;
+  align-items: center;
+  min-height: inherit;
+}
+
+.hero-copy {
+  max-width: 600px;
+}
+
+.hero-search {
+  position: absolute;
+  right: 10px;
+  top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .94);
+  box-shadow: var(--shadow);
+}
+
+.hero-search input {
+  width: 230px;
+  border: 0;
+  outline: 0;
+  padding: 10px;
+  color: var(--ink);
+  background: transparent;
+  font: inherit;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .eyebrow {
@@ -55,37 +97,6 @@
   display: flex;
   gap: 12px;
   margin-top: 30px;
-}
-
-.search-panel {
-  position: relative;
-  margin: -42px auto 0;
-  z-index: 4;
-  background: #fff;
-  border-radius: 14px;
-  padding: 18px;
-  box-shadow: var(--shadow);
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.search-panel strong {
-  padding: 0 12px;
-}
-
-.field {
-  border: 1px solid var(--line);
-  background: #fbfdfb;
-  border-radius: 7px;
-  padding: 13px 14px;
-  min-width: 170px;
-  color: #63736b;
-  font-size: 14px;
-}
-
-.field.grow {
-  flex: 1;
 }
 
 .section {
@@ -181,9 +192,30 @@
 
 .compare-grid {
   display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr 1fr;
+  grid-template-columns: 1.2fr .8fr .8fr .8fr 1.6fr;
   gap: 12px;
   margin-top: 28px;
+  align-items: stretch;
+}
+
+.compare-intro {
+  display: flex;
+  align-items: center;
+}
+
+.compare-visual {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.compare-visual img {
+  display: block;
+  width: 100%;
+  max-height: 205px;
+  object-fit: contain;
+  object-position: right center;
 }
 
 .mini {
@@ -228,14 +260,24 @@
     min-height: 520px;
   }
 
-  .hero h1 {
-    font-size: 45px;
+  .hero .shell {
+    align-items: flex-end;
+    padding-bottom: 70px;
   }
 
-  .search-panel {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    margin: 18px;
+  .hero-search {
+    top: 18px;
+    right: 10px;
+    left: 10px;
+  }
+
+  .hero-search input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .hero h1 {
+    font-size: 45px;
   }
 
   .section {
@@ -249,5 +291,10 @@
   .compare-grid,
   .flow {
     grid-template-columns: 1fr;
+  }
+
+  .compare-visual img {
+    max-height: 230px;
+    object-position: center;
   }
 }

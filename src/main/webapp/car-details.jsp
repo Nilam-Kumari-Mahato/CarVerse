@@ -573,7 +573,7 @@
                                                     </b>
                                                 </div>
 
-                                                <a class="btn btn-primary" href="login.jsp">
+                                                <a class="btn btn-primary" href="login.html">
                                                     Check eligibility →
                                                 </a>
 

@@ -982,16 +982,15 @@
                                                                     <% } %>
 
                                                                         <% } for (int i=startPage; i <=endPage; i++) {
+                                                                            String pageClass = (i == currentPage) ? "page active" : "page";
+                                                                            String currentPageAttribute = (i == currentPage) ? "aria-current=\"page\"" : "";
                                                                             %>
 
                                                                             <button
-                                                                                class="page <%= (i == currentPage) ? "
-                                                                                active" : "" %>"
+                                                                                class="<%= pageClass %>"
                                                                                 type="button"
                                                                                 data-page="<%= i %>"
-                                                                                    <%= (i==currentPage)
-                                                                                        ? "aria-current=\" page\"" : ""
-                                                                                        %>>
+                                                                                <%= currentPageAttribute %>>
 
                                                                                         <%= i %>
 

@@ -1,33 +1,76 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
-        <title>sign in | CarVerse</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Sign in | CarVerse</title>
         <link rel="stylesheet" href="assets/css/common.css">
         <link rel="stylesheet" href="assets/css/auth.css">
-        <style>.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}</style>
-
+        <style>
+          .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+          .alert-error {
+            background: #fdf0f0;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            border-radius: 7px;
+            padding: 11px 14px;
+            font-size: 13px;
+            margin-top: 15px;
+            line-height: 1.4;
+          }
+          .alert-success {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+            border-radius: 7px;
+            padding: 11px 14px;
+            font-size: 13px;
+            margin-top: 15px;
+            line-height: 1.4;
+          }
+        </style>
     </head>
-    v
-    <body>
-        
-        <main class="auth-page">
-      <section class="auth-card" aria-labelledby="sign-in-title">
-        <header class="auth-copy">
-          <a class="brand" href="index.jsp" aria-label="CarVerse home">CARVERSE</a>
-          <p class="eyebrow" style="margin-top:80px">Welcome back</p>
-          <h1>Your next chapter <span>starts in the driver's seat.</span></h1>
-          <p>Compare favourites, track your booking, schedule maintenance, and keep your car journey in one calm place.</p>
-        </header>
-        <form class="auth-form" action="login.jsp" method="post">
-          <h2 id="sign-in-title">Sign in</h2>
-          <p class="sub">Enter your account details to continue.</p>
-          <div><label class="sr-only" for="email">Email address</label><input class="input" id="email" name="email" type="email"  placeholder="Email address" required></div>
-          <div><label class="sr-only" for="password">Password</label><input class="input" id="password" name="password" type="password" placeholder="Password" required></div>
-          <p class="form-note" style="text-align:right"><a href="#">Forgot password?</a></p>
-          <button class="btn btn-primary" type="submit">Sign in <span aria-hidden="true">→</span></button>
-          <p class="form-note">New to CarVerse? <a href="user_registration.html">Create an account</a></p>
-   		</form>
-   	  </section>
-        </main>
-    </body>
     
+    <body>
+        <main class="auth-page">
+          <section class="auth-card" aria-labelledby="sign-in-title">
+            <header class="auth-copy">
+              <a class="brand" href="index.jsp" aria-label="CarVerse home">CARVERSE</a>
+              <p class="eyebrow" style="margin-top:80px">Welcome back</p>
+              <h1>Your next chapter <span>starts in the driver's seat.</span></h1>
+              <p>Compare favourites, track your booking, schedule maintenance, and keep your car journey in one calm place.</p>
+            </header>
+            <form class="auth-form" action="UserLogin" method="post">
+              <h2 id="sign-in-title">Sign in</h2>
+              <p class="sub">Enter your account details to continue.</p>
+              <div id="alert-box" style="display:none;" role="alert"></div>
+              <div><label class="sr-only" for="email">Email address</label><input class="input" id="email" name="email" type="email" placeholder="Email address" required></div>
+              <div><label class="sr-only" for="password">Password</label><input class="input" id="password" name="password" type="password" placeholder="Password" required></div>
+              <p class="form-note" style="text-align:right"><a href="#">Forgot password?</a></p>
+              <button class="btn btn-primary" type="submit">Sign in</button>
+              <p class="form-note">New to CarVerse? <a href="user_registration.html">Create an account</a></p>
+            </form>
+          </section>
+        </main>
+        <script>
+          (function() {
+            const params = new URLSearchParams(window.location.search);
+            const alertBox = document.getElementById('alert-box');
+            if (!alertBox) return;
+            if (params.get('error') === 'invalid') {
+              alertBox.className = 'alert-error';
+              alertBox.textContent = 'Invalid email or password. Please try again.';
+              alertBox.style.display = 'block';
+            } else if (params.get('error') === 'server') {
+              alertBox.className = 'alert-error';
+              alertBox.textContent = 'Unable to sign in due to a server error. Please try again.';
+              alertBox.style.display = 'block';
+            } else if (params.get('logout') === 'true') {
+              alertBox.className = 'alert-success';
+              alertBox.textContent = 'You have been successfully signed out.';
+              alertBox.style.display = 'block';
+            }
+          })();
+        </script>
+    </body>
 </html>
