@@ -1,0 +1,35 @@
+<%
+    String sharedNavPath = request.getServletPath();
+    boolean sharedNavHome = sharedNavPath.endsWith("/index.jsp");
+    boolean sharedNavCars = sharedNavPath.endsWith("/car-search")
+            || sharedNavPath.endsWith("/car-search.jsp")
+            || sharedNavPath.endsWith("/car-details")
+            || sharedNavPath.endsWith("/car-details.jsp")
+            || sharedNavPath.endsWith("/car-specs")
+            || sharedNavPath.endsWith("/car-specs.jsp")
+            || sharedNavPath.endsWith("/booking.jsp")
+            || sharedNavPath.endsWith("/profile_view.jsp");
+    boolean sharedNavCompare = sharedNavPath.endsWith("/compare.jsp");
+    boolean sharedNavMaintenance = sharedNavPath.endsWith("/Book_maintenance.jsp");
+%>
+<nav class="nav">
+    <div class="shell">
+        <a class="brand" href="<%= request.getContextPath() %>/index.jsp">CARVERSE</a>
+
+        <div class="navlinks">
+            <a class="<%= sharedNavHome ? "active" : "" %>" href="<%= request.getContextPath() %>/index.jsp#hero">Explore</a>
+            <a class="<%= sharedNavCars ? "active" : "" %>" href="<%= request.getContextPath() %>/car-search">New Cars</a>
+            <a class="<%= sharedNavCompare ? "active" : "" %>" href="<%= request.getContextPath() %>/compare.jsp">Compare</a>
+            <a class="<%= sharedNavMaintenance ? "active" : "" %>" href="<%= request.getContextPath() %>/index.jsp#maintenance">Maintenance</a>
+        </div>
+
+        <% if (session.getAttribute("USERNAME") == null || session.getAttribute("USERID") == null) { %>
+            <div class="nav-actions">
+                <a class="btn btn-outline" href="<%= request.getContextPath() %>/login.html">Sign in</a>
+                <a class="btn btn-primary" href="<%= request.getContextPath() %>/user_registration.html">Sign up</a>
+            </div>
+        <% } else { %>
+            <a class="user-name" href="<%= request.getContextPath() %>/view_profile">Welcome, <%= session.getAttribute("USERNAME") %></a>
+        <% } %>
+    </div>
+</nav>

@@ -49,7 +49,7 @@ public class Admin extends HttpServlet {
             Connection con = DriverManager.getConnection(
                     "jdbc:oracle:thin:@localhost:1521:XE",
                     "CARVERSE",
-                    "oracle26"
+                    "manager"
             );
 
             Statement stmt = con.createStatement();

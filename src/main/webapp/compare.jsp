@@ -453,27 +453,7 @@
   <!-- =========================================================
        NAVIGATION
        ========================================================= -->
-  <nav class="nav">
-    <div class="shell">
-      <a class="brand" href="index.jsp">CARVERSE</a>
-      <div class="navlinks">
-        <a href="index.jsp">Explore</a>
-        <a href="car-search.jsp">New Cars</a>
-        <a class="active" href="compare.jsp">Compare</a>
-        <a href="index.jsp#ownership">Ownership</a>
-      </div>
-      <%
-        String userName = (String) session.getAttribute("USERNAME");
-        String userId   = (String) session.getAttribute("USERID");
-        if (userName == null || userId == null) {
-      %>
-        <a class="btn btn-outline" href="login.html">Sign in</a>
-        <a class="btn btn-primary" href="user_registration.html">Sign up →</a>
-      <% } else { %>
-        <a class="user-name" href="view_profile">Welcome, <%= userName %></a>
-      <% } %>
-    </div>
-  </nav>
+  <%@ include file="/WEB-INF/jspf/customer-nav.jspf" %>
 
   <!-- =========================================================
        HERO
@@ -796,15 +776,7 @@
   <!-- =========================================================
        FOOTER
        ========================================================= -->
-  <footer class="footer">
-    <div class="shell">
-      <div>
-        <a class="brand" href="index.jsp">CARVERSE</a>
-      </div>
-      <div>Explore · Compare · Book · Maintenance · Support</div>
-      <div>© 2026 CarVerse</div>
-    </div>
-  </footer>
+  <%@ include file="/WEB-INF/jspf/customer-footer.jspf" %>
 
   <div class="toast"></div>
 

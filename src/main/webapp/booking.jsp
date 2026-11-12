@@ -497,47 +497,7 @@
 
 <!-- ================= NAVBAR ================= -->
 
-<nav class="nav">
-    <div class="shell">
-
-        <a class="brand" href="index.jsp">CARVERSE</a>
-
-        <div class="navlinks">
-            <a href="index.jsp">Explore</a>
-            <a class="active" href="<%= request.getContextPath() %>/car-search">New Cars</a>
-            <a href="compare.jsp">Compare</a>
-            <a href="index.jsp#ownership">Ownership</a>
-        </div>
-
-          <%
-                String userName = (String) session.getAttribute("USERNAME");
-                String userId = (String) session.getAttribute("USERID");
-
-                if (userName == null || userId == null) {
-            %>
-
-                <!-- User is not logged in -->
-                <a class="btn btn-outline" href="login.html">Sign in</a>
-
-                <a class="btn btn-primary" href="user_registration.html">
-                    Sign up →
-                </a>
-
-            <%
-                } else {
-            %>
-
-                <!-- Logged-in user -->
-                <a class="user-name" href="view_profile">
-                    Welcome, <%= userName %>
-                </a>
-
-            <%
-                }
-            %>
-
-    </div>
-</nav>
+<%@ include file="/WEB-INF/jspf/customer-nav.jspf" %>
 
 
 

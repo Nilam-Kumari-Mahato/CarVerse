@@ -161,27 +161,7 @@
 %>
 
 <!-- ── Navbar ──────────────────────────────────────────────────────────── -->
-<nav class="nav">
-  <div class="shell">
-    <a class="brand" href="index.jsp">CARVERSE</a>
-
-    <div class="navlinks">
-      <a href="index.jsp">Explore</a>
-      <a href="car-search.jsp">New Cars</a>
-      <a href="compare.jsp">Compare</a>
-      <a class="active" href="business-dashboard.jsp">Dashboard</a>
-    </div>
-
-    <span class="user-name" style="cursor:default;">
-      <%= businessName %>
-    </span>
-
-    <!-- Logout as a POST form (safer than a plain GET link) -->
-    <form action="BusinessLogout" method="post" style="margin:0;">
-      <button class="btn btn-outline" type="submit">Sign out</button>
-    </form>
-  </div>
-</nav>
+<%@ include file="/WEB-INF/jspf/business-nav.jspf" %>
 
 <!-- ── Hero strip ───────────────────────────────────────────────────────── -->
 <div class="dash-hero">
@@ -310,16 +290,7 @@
 </div><%-- .dash-page --%>
 
 <!-- ── Footer ───────────────────────────────────────────────────────────── -->
-<footer class="footer">
-  <div class="shell">
-    <div>
-      <a class="brand" href="index.jsp">CARVERSE</a>
-      <p>Drive your next decision with confidence.</p>
-    </div>
-    <div>Explore · Compare · Book · Maintenance · Support</div>
-    <div>© 2026 CarVerse</div>
-  </div>
-</footer>
+<%@ include file="/WEB-INF/jspf/customer-footer.jspf" %>
 
 <script src="assets/js/carverse.js"></script>
 </body>
