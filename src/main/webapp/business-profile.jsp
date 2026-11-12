@@ -104,21 +104,7 @@
 %>
 
 <!-- ── Navbar ──────────────────────────────────────────────────── -->
-<nav class="nav">
-  <div class="shell">
-    <a class="brand" href="index.jsp">CARVERSE</a>
-    <div class="navlinks">
-      <a href="index.jsp">Explore</a>
-      <a href="car-search.jsp">New Cars</a>
-      <a href="compare.jsp">Compare</a>
-      <a class="active" href="business-dashboard.jsp">Dashboard</a>
-    </div>
-    <span class="user-name" style="cursor:default;"><%= businessName %></span>
-    <form action="BusinessLogout" method="post" style="margin:0;">
-      <button class="btn btn-outline" type="submit">Sign out</button>
-    </form>
-  </div>
-</nav>
+<%@ include file="/WEB-INF/jspf/business-nav.jspf" %>
 
 <!-- ── Hero ────────────────────────────────────────────────────── -->
 <div class="bp-hero">
@@ -312,11 +298,6 @@
   </div>
 </div>
 
-<footer class="footer">
-  <div class="shell">
-    <span class="brand">CARVERSE</span>
-    <span style="color:#6a7a73;">© 2026 CarVerse · Business Partner Portal</span>
-  </div>
-</footer>
+<%@ include file="/WEB-INF/jspf/business-footer.jspf" %>
 </body>
 </html>

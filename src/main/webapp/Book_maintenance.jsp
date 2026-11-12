@@ -521,47 +521,7 @@
         </style>
     </head>
     <body>
-        <nav class="nav">
-        <div class="shell">
-
-            <a class="brand" href="index.jsp">CARVERSE</a>
-
-            <div class="navlinks">
-                <a class="active" href="index.jsp">Explore</a>
-                <a href="car-search.jsp">New Cars</a>
-                <a href="compare.jsp">Compare</a>
-                <a href="Book_maintenance.jsp">Maintenance</a>
-            </div>
-
-            <%
-                String userName = (String) session.getAttribute("USERNAME");
-                String userId = (String) session.getAttribute("USERID");
-
-                if (userName == null || userId == null) {
-            %>
-
-                <!-- User is not logged in -->
-                <a class="btn btn-outline" href="login.html">Sign in</a>
-
-                <a class="btn btn-primary" href="user_registration.html">
-                    Sign up →
-                </a>
-
-            <%
-                } else {
-            %>
-
-                <!-- Logged-in user -->
-                <span class="user-name">
-                    Welcome, <%= userName %>
-                </span>
-
-            <%
-                }
-            %>
-
-        </div>
-    </nav>
+        <%@ include file="/WEB-INF/jspf/customer-nav.jspf" %>
             
             <!-- ================= MAIN CONTENT ================= -->
 

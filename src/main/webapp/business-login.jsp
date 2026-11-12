@@ -133,7 +133,7 @@
       </p>
 
       <button class="btn btn-primary" type="submit">
-        Sign in &nbsp;→
+        Sign in &nbsp;
       </button>
 
       <hr class="divider">

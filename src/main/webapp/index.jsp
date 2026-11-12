@@ -62,49 +62,7 @@
 
 <body>
 
-    <nav class="nav">
-        <div class="shell">
-
-            <a class="brand" href="index.jsp">CARVERSE</a>
-
-            <div class="navlinks">
-                <a class="active" href="#hero">Explore</a>
-                <a href="#models">New Cars</a>
-                <a href="#compare">Compare</a>
-                <a href="#maintenance">Maintenance</a>
-            </div>
-
-            <div>
-            <%
-                String userName = (String) session.getAttribute("USERNAME");
-                String userId = (String) session.getAttribute("USERID");
-
-                if (userName == null || userId == null) {
-            %>
-
-                <!-- User is not logged in -->
-                <a class="btn btn-outline" href="login.html">Sign in</a>
-
-                <a class="btn btn-primary" href="user_registration.html">
-                    Sign up
-                </a>
-
-            <%
-                } else {
-            %>
-
-                <!-- Logged-in user -->
-                <a class="user-name" href="view_profile">
-                    Welcome, <%= userName %>
-                </a>
-
-            <%
-                }
-            %>
-                </div>
-
-        </div>
-    </nav>
+    <%@ include file="/WEB-INF/jspf/customer-nav.jspf" %>
 
 
     <main>
@@ -300,35 +258,7 @@
 
     <!-- FOOTER -->
 
-    <footer class="footer">
-
-        <div class="shell">
-
-            <div>
-
-                <a class="brand" href="index.jsp">
-                    CARVERSE
-                </a>
-
-                <p>
-                    Drive your next decision with confidence.
-                </p>
-
-            </div>
-
-
-            <div>
-                Explore · Compare · Book · Maintenance · Support
-            </div>
-
-
-            <div>
-                © 2026 CarVerse
-            </div>
-
-        </div>
-
-    </footer>
+    <%@ include file="/WEB-INF/jspf/customer-footer.jspf" %>
 
 
     <div class="toast"></div>

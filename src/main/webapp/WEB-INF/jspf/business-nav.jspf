@@ -1,0 +1,17 @@
+<nav class="nav">
+    <div class="shell">
+        <a class="brand" href="<%= request.getContextPath() %>/index.jsp">CARVERSE</a>
+
+        <div class="navlinks">
+            <a href="<%= request.getContextPath() %>/index.jsp">Explore</a>
+            <a href="<%= request.getContextPath() %>/car-search">New Cars</a>
+            <a href="<%= request.getContextPath() %>/compare.jsp">Compare</a>
+            <a class="active" href="<%= request.getContextPath() %>/business-dashboard.jsp">Dashboard</a>
+        </div>
+
+        <span class="user-name" style="cursor:default;"><%= businessName %></span>
+        <form action="<%= request.getContextPath() %>/BusinessLogout" method="post" style="margin:0;">
+            <button class="btn btn-outline" type="submit">Sign out</button>
+        </form>
+    </div>
+</nav>
