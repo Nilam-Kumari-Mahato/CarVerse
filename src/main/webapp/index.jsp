@@ -94,7 +94,7 @@
                 <form class="hero-search" action="car-search.jsp" method="get" role="search">
                     <label class="sr-only" for="home-car-search">Search cars</label>
                     <input id="home-car-search" type="search" name="query" placeholder="Search brand, model or body type">
-                    <button class="btn btn-primary" type="submit">Search</button>
+                    <button class="unstyled-button" type="submit">Search</button>
                 </form>
 
             </div>
