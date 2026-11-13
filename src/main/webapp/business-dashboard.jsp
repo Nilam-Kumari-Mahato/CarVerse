@@ -270,22 +270,6 @@
 
     </div>
 
-    <!-- Account info + logout panel -->
-    <div class="account-panel">
-      <div>
-        <h2>Account</h2>
-        <p>
-          Signed in as a <strong>Business Partner</strong>.
-          Partner ID: <code><%= businessId %></code>
-        </p>
-      </div>
-      <div class="actions">
-        <form action="BusinessLogout" method="post" style="margin:0;">
-          <button class="btn btn-dark" type="submit">Sign out →</button>
-        </form>
-      </div>
-    </div>
-
   </div><%-- .shell --%>
 </div><%-- .dash-page --%>
 
