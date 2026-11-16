@@ -45,8 +45,9 @@ public class view_profile extends HttpServlet {
 
                 String q1 = "SELECT * FROM USER_REGISTRATION WHERE USER_ID = ?";
 
-                String q2 = "SELECT booking_id, user_id, car_id, pickup_location, drop_location, total_amount FROM BOOKING_DETAILS "
-                           + "WHERE user_id = ?";
+                String q2 = "SELECT booking_id, user_id, car_id, pickup_location, drop_location, total_amount, " +
+                           "booking_status, NVL(cancellation_status,'NONE') AS cancellation_status " +
+                           "FROM BOOKING_DETAILS WHERE user_id = ? ORDER BY BOOKING_DATE DESC";
 
                 // ---- Fetch user profile ----
                 try (PreparedStatement pstmt = con.prepareStatement(q1)) {
@@ -78,6 +79,8 @@ public class view_profile extends HttpServlet {
                             bd.setPickupLocation(rs2.getString("pickup_location"));
                             bd.setDropLocation(rs2.getString("drop_location"));
                             bd.setTotalAmount(rs2.getDouble("total_amount"));
+                            bd.setBookingStatus(rs2.getString("booking_status"));
+                            bd.setCancellationStatus(rs2.getString("cancellation_status"));
                             bookingList.add(bd);
                         }
                     }
@@ -93,9 +96,36 @@ public class view_profile extends HttpServlet {
         request.getRequestDispatcher("profile_view.jsp").forward(request, response);
     }
 
-    // Optional: if you ever call this via a POST form elsewhere, delegate to doGet
+    // POST — handle cancel booking request submitted from profile_view.jsp
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response);
+
+        HttpSession ses = request.getSession(false);
+        String u_id = (ses != null) ? (String) ses.getAttribute("USERID") : null;
+
+        if (u_id == null) {
+            response.sendRedirect("login.html");
+            return;
+        }
+
+        String action    = request.getParameter("action");
+        String bookingId = request.getParameter("bookingId");
+
+        if ("cancelBooking".equals(action) && bookingId != null && !bookingId.trim().isEmpty()) {
+            try {
+                BusinessDAO dao = new BusinessDAO();
+                boolean ok = dao.requestCancellation(bookingId.trim(), u_id);
+                if (ok) {
+                    response.sendRedirect("view_profile?cancel=success&bid=" + bookingId.trim());
+                } else {
+                    // Booking already has an active/processed cancellation, or doesn't belong to user
+                    response.sendRedirect("view_profile?cancel=already&bid=" + bookingId.trim());
+                }
+            } catch (Exception e) {
+                response.sendRedirect("view_profile?cancel=error");
+            }
+        } else {
+            doGet(request, response);
+        }
     }
 }

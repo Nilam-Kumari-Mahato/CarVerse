@@ -645,7 +645,6 @@ public class BusinessDAO {
         public String bookingStatus;
         // PAYMENT_DETAILS table not joined — no paymentStatus
         public String cancellationStatus;
-        public String cancellationReason;
         public String cancellationDate;
     }
 
@@ -664,7 +663,6 @@ public class BusinessDAO {
             "       b.PICKUP_LOCATION, b.DROP_LOCATION," +
             "       b.TOTAL_AMOUNT, b.BOOKING_STATUS," +
             "       NVL(b.CANCELLATION_STATUS,'NONE') AS CANCELLATION_STATUS," +
-            "       b.CANCELLATION_REASON," +
             "       TO_CHAR(b.CANCELLATION_DATE,'DD-Mon-YYYY') AS CANCELLATION_DATE" +
             "  FROM BOOKING_DETAILS b" +
             "  JOIN CAR_DETAILS c ON c.CAR_ID = b.CAR_ID" +
@@ -699,7 +697,6 @@ public class BusinessDAO {
                     r.totalAmount        = rs.getDouble("TOTAL_AMOUNT");
                     r.bookingStatus      = rs.getString("BOOKING_STATUS");
                     r.cancellationStatus = rs.getString("CANCELLATION_STATUS");
-                    r.cancellationReason = rs.getString("CANCELLATION_REASON");
                     r.cancellationDate   = rs.getString("CANCELLATION_DATE");
                     list.add(r);
                 }
@@ -748,6 +745,26 @@ public class BusinessDAO {
         try (Connection con = getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, bookingId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    /**
+     * Records a cancellation request submitted by the customer.
+     * Sets CANCELLATION_STATUS='REQUESTED'.
+     * Only allowed when current status is 'NONE' (no prior request or decision).
+     * The booking must belong to the given userId.
+     */
+    public boolean requestCancellation(String bookingId, String userId) throws Exception {
+        String sql =
+            "UPDATE BOOKING_DETAILS" +
+            "   SET CANCELLATION_STATUS='REQUESTED'" +
+            " WHERE BOOKING_ID=? AND USER_ID=? AND CANCELLATION_STATUS='NONE'";
+
+        try (Connection con = getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, bookingId);
+            ps.setString(2, userId);
             return ps.executeUpdate() > 0;
         }
     }
@@ -907,7 +924,6 @@ public class BusinessDAO {
             "       b.PICKUP_LOCATION, b.DROP_LOCATION," +
             "       b.TOTAL_AMOUNT, b.BOOKING_STATUS," +
             "       NVL(b.CANCELLATION_STATUS,'NONE') AS CANCELLATION_STATUS," +
-            "       b.CANCELLATION_REASON," +
             "       TO_CHAR(b.CANCELLATION_DATE,'DD-Mon-YYYY') AS CANCELLATION_DATE" +
             "  FROM BOOKING_DETAILS b" +
             "  JOIN CAR_DETAILS c ON c.CAR_ID = b.CAR_ID" +
@@ -934,7 +950,6 @@ public class BusinessDAO {
                     r.totalAmount        = rs.getDouble("TOTAL_AMOUNT");
                     r.bookingStatus      = rs.getString("BOOKING_STATUS");
                     r.cancellationStatus = rs.getString("CANCELLATION_STATUS");
-                    r.cancellationReason = rs.getString("CANCELLATION_REASON");
                     r.cancellationDate   = rs.getString("CANCELLATION_DATE");
                     list.add(r);
                 }

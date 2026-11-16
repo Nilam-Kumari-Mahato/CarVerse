@@ -1,7 +1,5 @@
 package com.servlet;
 
-
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,82 +12,51 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet("/MaintenanceUpdate")
 public class Maintenance_updated extends HttpServlet {
+
     private static final long serialVersionUID = 1L;
 
-    // Database connection details (adjust to match your local setup)
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/carverse_db";
-    private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "password";
+    private static final String DB_URL      = "jdbc:oracle:thin:@localhost:1521:XE";
+    private static final String DB_USER     = "CARVERSE";
+    private static final String DB_PASSWORD = "manager";
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         request.setCharacterEncoding("UTF-8");
 
-        // 1. Read input values from the JSP form
-        String recordIdStr = request.getParameter("recordId");
-        String status = request.getParameter("status");
-        String notes = request.getParameter("technicianNotes");
-        String newFeature = request.getParameter("newFeatures");
-        String costStr = request.getParameter("cost");
+        String maintenanceId = request.getParameter("maintenanceId");
+        String status        = request.getParameter("status");
 
-        int recordId = 0;
-        double cost = 0.0;
-
-        try {
-            if (recordIdStr != null && !recordIdStr.trim().isEmpty()) {
-                recordId = Integer.parseInt(recordIdStr.trim());
-            }
-            if (costStr != null && !costStr.trim().isEmpty()) {
-                cost = Double.parseDouble(costStr.trim());
-            }
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
+        if (maintenanceId == null || maintenanceId.trim().isEmpty()
+                || status == null || status.trim().isEmpty()) {
+            response.sendRedirect("Admin?action=maintenance");
+            return;
         }
 
-        // 2. Database operations using try-with-resources for automatic closing
-        String updateQuery = "UPDATE maintenance SET status = ?, technician_notes = ?, cost = ? WHERE id = ?";
-        String featureQuery = "INSERT INTO car_features (maintenance_id, feature_name) VALUES (?, ?)";
-
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("oracle.jdbc.driver.OracleDriver");
 
-            try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-                
-                // Update maintenance record
-                try (PreparedStatement psUpdate = conn.prepareStatement(updateQuery)) {
-                    psUpdate.setString(1, status);
-                    psUpdate.setString(2, notes);
-                    psUpdate.setDouble(3, cost);
-                    psUpdate.setInt(4, recordId);
-                    psUpdate.executeUpdate();
-                }
+            try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+                 PreparedStatement ps = conn.prepareStatement(
+                         "UPDATE MAINTENANCE_DETAILS SET MAINTENANCE_STATUS = ? WHERE MAINTENANCE_ID = ?")) {
 
-                // Add newly verified feature if provided
-                if (newFeature != null && !newFeature.trim().isEmpty()) {
-                    try (PreparedStatement psFeature = conn.prepareStatement(featureQuery)) {
-                        psFeature.setInt(1, recordId);
-                        psFeature.setString(2, newFeature.trim());
-                        psFeature.executeUpdate();
-                    }
-                }
+                ps.setString(1, status.trim());
+                ps.setString(2, maintenanceId.trim());
+                ps.executeUpdate();
             }
 
-            // 3. Success redirect
-            response.sendRedirect("Admin?action=maintenanceDetails&recordId=" + recordId + "&success=true");
+            response.sendRedirect("Admin?action=maintenance&updated=true");
 
         } catch (Exception e) {
             e.printStackTrace();
-            // Failure redirect
-            response.sendRedirect("Admin?action=maintenanceDetails&recordId=" + recordId + "&error=true");
+            response.sendRedirect("Admin?action=maintenance&error=true");
         }
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Prevent direct GET requests and return to dashboard/maintenance
         response.sendRedirect("Admin?action=maintenance");
     }
 }

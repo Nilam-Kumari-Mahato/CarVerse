@@ -7,6 +7,8 @@ public class BookingDetail {
     private String pickupLocation;
     private String dropLocation;
     private double totalAmount;
+    private String bookingStatus;
+    private String cancellationStatus;
 
     public BookingDetail() {}
 
@@ -27,4 +29,10 @@ public class BookingDetail {
 
     public double getTotalAmount() { return totalAmount; }
     public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
+
+    public String getBookingStatus() { return bookingStatus; }
+    public void setBookingStatus(String bookingStatus) { this.bookingStatus = bookingStatus; }
+
+    public String getCancellationStatus() { return cancellationStatus; }
+    public void setCancellationStatus(String cancellationStatus) { this.cancellationStatus = cancellationStatus; }
 }

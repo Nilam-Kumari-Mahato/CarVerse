@@ -262,11 +262,6 @@
         <% if (hasCancelRequest) { %>
         <div class="cancel-section">
           <h4>↩️ Cancellation Request</h4>
-          <div class="cancel-reason">
-            <strong>Customer reason:</strong>
-            <%= b.cancellationReason == null || b.cancellationReason.isEmpty()
-                ? "No reason provided." : b.cancellationReason %>
-          </div>
           <div class="cancel-actions">
             <form action="BusinessBookings" method="post" style="margin:0;"
                   onsubmit="return confirm('Approve this cancellation? The booking will be cancelled.');">
