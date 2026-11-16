@@ -90,6 +90,23 @@ public class BusinessBookingsServlet extends HttpServlet {
                     loadAndForward(req, res, businessId, null);
                 }
 
+            } else if ("updateBookingStatus".equals(action)) {
+                String newStatus = trim(req.getParameter("newStatus"));
+                if (blank(newStatus)) {
+                    req.setAttribute("error", "No status value provided.");
+                    loadAndForward(req, res, businessId, null);
+                    return;
+                }
+                ok = dao.updateBookingStatus(bookingId, newStatus, businessId);
+                if (ok) {
+                    res.sendRedirect("BusinessBookings?success=Booking+" + bookingId
+                        + "+status+updated+to+" + newStatus + ".");
+                } else {
+                    req.setAttribute("error",
+                        "Could not update status. Booking not found or not associated with your account.");
+                    loadAndForward(req, res, businessId, null);
+                }
+
             } else {
                 res.sendRedirect("BusinessBookings");
             }

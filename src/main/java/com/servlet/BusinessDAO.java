@@ -1,4 +1,4 @@
-package com.servlet;
+﻿package com.servlet;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -22,7 +22,7 @@ import java.util.List;
  *                           (CAR_DETAILS.COMPANY_ID stores the BUSINESS_ID)
  *   3. CAR_DETAILS (fleet)— inventory status queries
  *   4. BOOKING_DETAILS    — bookings per partner + cancellation handling
- *   5. COMMISSION_CONFIG / BOOKING_DETAILS / PAYMENT_DETAILS — earnings
+ *   5. COMMISSION_DETAILS / BOOKING_DETAILS — earnings
  *
  * Password security:
  *   16-byte SecureRandom salt → SHA-256(salt + password) → stored as saltHex:hashHex
@@ -646,6 +646,8 @@ public class BusinessDAO {
         // PAYMENT_DETAILS table not joined — no paymentStatus
         public String cancellationStatus;
         public String cancellationDate;
+        public double commissionAmount;  // from COMMISSION_DETAILS (0 if not yet inserted)
+        public String commissionStatus;  // from COMMISSION_DETAILS (null if not yet inserted)
     }
 
     /**
@@ -750,6 +752,36 @@ public class BusinessDAO {
     }
 
     /**
+     * Updates the booking status for a booking that belongs to this partner.
+     * If the new status is CANCELLED and a customer cancellation was REQUESTED,
+     * automatically promotes CANCELLATION_STATUS to APPROVED.
+     */
+    public boolean updateBookingStatus(String bookingId, String newStatus, String businessId)
+            throws Exception {
+        if (!bookingBelongsToPartner(bookingId, businessId)) return false;
+
+        try (Connection con = getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(
+                    "UPDATE BOOKING_DETAILS SET BOOKING_STATUS = ? WHERE BOOKING_ID = ?")) {
+                ps.setString(1, newStatus);
+                ps.setString(2, bookingId);
+                if (ps.executeUpdate() == 0) return false;
+            }
+            if ("CANCELLED".equalsIgnoreCase(newStatus)) {
+                try (PreparedStatement ps2 = con.prepareStatement(
+                        "UPDATE BOOKING_DETAILS" +
+                        "   SET CANCELLATION_STATUS = 'APPROVED'," +
+                        "       CANCELLATION_DATE   = SYSDATE" +
+                        " WHERE BOOKING_ID = ? AND CANCELLATION_STATUS = 'REQUESTED'")) {
+                    ps2.setString(1, bookingId);
+                    ps2.executeUpdate();
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
      * Records a cancellation request submitted by the customer.
      * Sets CANCELLATION_STATUS='REQUESTED'.
      * Only allowed when current status is 'NONE' (no prior request or decision).
@@ -817,7 +849,7 @@ public class BusinessDAO {
     }
 
     // =======================================================================
-    // SECTION 5 — COMMISSION_DETAILS / PAYMENT_DETAILS : Earnings
+    // SECTION 5 — COMMISSION_DETAILS / BOOKING_DETAILS : Earnings
     // =======================================================================
 
     /**
@@ -860,7 +892,7 @@ public class BusinessDAO {
             "  COUNT(*) AS TOTAL_BOOKINGS," +
             "  SUM(CASE WHEN b.BOOKING_STATUS='COMPLETED' THEN 1 ELSE 0 END) AS COMPLETED," +
             "  SUM(CASE WHEN b.BOOKING_STATUS NOT IN ('COMPLETED','CANCELLED') THEN 1 ELSE 0 END) AS PENDING_CNT," +
-            "  NVL(SUM(b.TOTAL_AMOUNT),0) AS GROSS," +
+            "  NVL(SUM(CASE WHEN b.BOOKING_STATUS='COMPLETED' THEN b.TOTAL_AMOUNT ELSE 0 END),0) AS GROSS," +
             "  NVL(SUM(CASE WHEN b.BOOKING_STATUS='COMPLETED' THEN b.TOTAL_AMOUNT ELSE 0 END),0) AS COMPLETED_AMT," +
             "  NVL(SUM(CASE WHEN b.BOOKING_STATUS NOT IN ('COMPLETED','CANCELLED') THEN b.TOTAL_AMOUNT ELSE 0 END),0) AS PENDING_AMT" +
             "  FROM BOOKING_DETAILS b" +
@@ -882,14 +914,16 @@ public class BusinessDAO {
             }
         }
 
-        // -- 3. Try to read commission amounts from COMMISSION_DETAILS -------
-        //       If rows exist, use them. Otherwise, calculate from rate.
+        // -- 3. Insert commission rows for any completed bookings that don't
+        //       have one yet, then read the stored totals. ----------------
+        upsertCommissionRows(businessId, s.commissionRate);
+
         String commSql =
             "SELECT NVL(SUM(cd.COMMISSION_AMOUNT),0) AS TOTAL_COMM" +
             "  FROM COMMISSION_DETAILS cd" +
             "  JOIN BOOKING_DETAILS b ON b.BOOKING_ID = cd.BOOKING_ID" +
             "  JOIN CAR_DETAILS c     ON c.CAR_ID = b.CAR_ID" +
-            " WHERE c.COMPANY_ID = ? AND cd.COMMISSION_STATUS = 'PAID'";
+            " WHERE c.COMPANY_ID = ? AND b.BOOKING_STATUS = 'COMPLETED'";
 
         double storedCommission = 0;
         try (Connection con = getConnection();
@@ -900,20 +934,87 @@ public class BusinessDAO {
             }
         }
 
-        // Use stored commission if it has values; otherwise calculate
-        if (storedCommission > 0) {
-            s.commissionAmount = storedCommission;
-        } else {
-            s.commissionAmount = s.grossAmount * (s.commissionRate / 100.0);
-        }
-        s.netEarnings = s.grossAmount - s.commissionAmount;
+        // After upsert, stored commission is authoritative.
+        s.commissionAmount = storedCommission;
+        s.netEarnings      = s.completedAmount - s.commissionAmount;
 
         return s;
     }
 
     /**
+     * For every COMPLETED booking belonging to this partner that has no row in
+     * COMMISSION_DETAILS yet, inserts one row with the calculated commission amount.
+     * Uses a NOT EXISTS guard so it is safe to call repeatedly (idempotent).
+     *
+     * COMMISSION_ID format: "COMM_<bookingId>"
+     * PAYMENT_ID         : 'N/A' (no payment integration yet)
+     * COMMISSION_STATUS  : 'Pending' (default; admin can update later)
+     */
+    private void upsertCommissionRows(String businessId, double commissionRate)
+            throws Exception {
+
+        // Fetch all completed bookings for this partner that have no commission row yet
+        String fetchSql =
+            "SELECT b.BOOKING_ID, b.TOTAL_AMOUNT" +
+            "  FROM BOOKING_DETAILS b" +
+            "  JOIN CAR_DETAILS c ON c.CAR_ID = b.CAR_ID" +
+            " WHERE c.COMPANY_ID = ?" +
+            "   AND b.BOOKING_STATUS = 'COMPLETED'" +
+            "   AND NOT EXISTS (" +
+            "         SELECT 1 FROM COMMISSION_DETAILS cd" +
+            "          WHERE cd.BOOKING_ID = b.BOOKING_ID)";
+
+        String insertSql =
+            "INSERT INTO COMMISSION_DETAILS (" +
+            "  COMMISSION_ID, BOOKING_ID, PAYMENT_ID," +
+            "  COMMISSION_RATE, COMMISSION_AMOUNT, COMMISSION_STATUS," +
+            "  PARTNER_ID, EFFECTIVE_FROM" +
+            ") VALUES (?,?,?," +
+            "          ?,?,?," +
+            "          ?,SYSDATE)";
+
+        try (Connection con = getConnection()) {
+            List<String[]> toInsert = new ArrayList<>();
+
+            try (PreparedStatement ps = con.prepareStatement(fetchSql)) {
+                ps.setString(1, businessId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String bookingId    = rs.getString("BOOKING_ID");
+                        double totalAmount  = rs.getDouble("TOTAL_AMOUNT");
+                        double commAmount   = totalAmount * (commissionRate / 100.0);
+                        toInsert.add(new String[]{
+                            bookingId,
+                            String.valueOf(totalAmount),
+                            String.valueOf(commAmount)
+                        });
+                    }
+                }
+            }
+
+            if (toInsert.isEmpty()) return;
+
+            try (PreparedStatement ps = con.prepareStatement(insertSql)) {
+                for (String[] row : toInsert) {
+                    String bookingId   = row[0];
+                    double commAmount  = Double.parseDouble(row[2]);
+                    ps.setString(1, "COMM_" + bookingId);   // COMMISSION_ID
+                    ps.setString(2, bookingId);              // BOOKING_ID
+                    ps.setString(3, "N/A");                  // PAYMENT_ID
+                    ps.setDouble(4, commissionRate);         // COMMISSION_RATE
+                    ps.setDouble(5, commAmount);             // COMMISSION_AMOUNT
+                    ps.setString(6, "Pending");              // COMMISSION_STATUS
+                    ps.setString(7, businessId);             // PARTNER_ID
+                    ps.addBatch();
+                }
+                ps.executeBatch();
+            }
+        }
+    }
+
+    /**
      * Returns per-booking earning rows for the earnings detail table.
-     * Only COMPLETED and CONFIRMED bookings are shown (not cancelled).
+     * Only COMPLETED bookings are shown.
      */
     public List<BookingRecord> getEarningsDetail(String businessId) throws Exception {
         String sql =
@@ -924,11 +1025,14 @@ public class BusinessDAO {
             "       b.PICKUP_LOCATION, b.DROP_LOCATION," +
             "       b.TOTAL_AMOUNT, b.BOOKING_STATUS," +
             "       NVL(b.CANCELLATION_STATUS,'NONE') AS CANCELLATION_STATUS," +
-            "       TO_CHAR(b.CANCELLATION_DATE,'DD-Mon-YYYY') AS CANCELLATION_DATE" +
+            "       TO_CHAR(b.CANCELLATION_DATE,'DD-Mon-YYYY') AS CANCELLATION_DATE," +
+            "       NVL(cd.COMMISSION_AMOUNT,0) AS COMMISSION_AMOUNT," +
+            "       cd.COMMISSION_STATUS" +
             "  FROM BOOKING_DETAILS b" +
             "  JOIN CAR_DETAILS c ON c.CAR_ID = b.CAR_ID" +
             "  LEFT JOIN USER_REGISTRATION u ON u.USER_ID = b.USER_ID" +
-            " WHERE c.COMPANY_ID = ? AND b.BOOKING_STATUS <> 'CANCELLED'" +
+            "  LEFT JOIN COMMISSION_DETAILS cd ON cd.BOOKING_ID = b.BOOKING_ID" +
+            " WHERE c.COMPANY_ID = ? AND b.BOOKING_STATUS = 'COMPLETED'" +
             " ORDER BY b.BOOKING_DATE DESC";
 
         List<BookingRecord> list = new ArrayList<>();
@@ -951,6 +1055,8 @@ public class BusinessDAO {
                     r.bookingStatus      = rs.getString("BOOKING_STATUS");
                     r.cancellationStatus = rs.getString("CANCELLATION_STATUS");
                     r.cancellationDate   = rs.getString("CANCELLATION_DATE");
+                    r.commissionAmount   = rs.getDouble("COMMISSION_AMOUNT");
+                    r.commissionStatus   = rs.getString("COMMISSION_STATUS");
                     list.add(r);
                 }
             }
@@ -959,13 +1065,13 @@ public class BusinessDAO {
     }
 
     /**
-     * Reads the applicable commission rate for a partner from COMMISSION_CONFIG.
-     * Partner-specific rate takes precedence over the default (PARTNER_ID IS NULL).
+     * Reads the applicable commission rate for a partner from COMMISSION_DETAILS.
+     * Partner-specific rate (PARTNER_ID = businessId) takes precedence over
+     * the default platform rate (PARTNER_ID IS NULL).
      */
     public double getCommissionRate(String businessId) throws Exception {
-        // Partner-specific rate
         String sql =
-            "SELECT COMMISSION_RATE FROM COMMISSION_CONFIG" +
+            "SELECT COMMISSION_RATE FROM COMMISSION_DETAILS" +
             " WHERE (PARTNER_ID=? OR PARTNER_ID IS NULL)" +
             "   AND (EFFECTIVE_TO IS NULL OR EFFECTIVE_TO >= SYSDATE)" +
             " ORDER BY CASE WHEN PARTNER_ID IS NOT NULL THEN 0 ELSE 1 END" +
@@ -988,7 +1094,7 @@ public class BusinessDAO {
             "  FROM BOOKING_DETAILS b" +
             "  JOIN CAR_DETAILS c ON c.CAR_ID = b.CAR_ID" +
             " WHERE c.COMPANY_ID=?" +
-            "   AND b.BOOKING_STATUS <> 'CANCELLED'" +
+            "   AND b.BOOKING_STATUS = 'COMPLETED'" +
             "   AND TRUNC(b.BOOKING_DATE,'MM') = TRUNC(SYSDATE,'MM')";
         try (Connection con = getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {

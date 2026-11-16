@@ -637,11 +637,26 @@ body {
 
             </a>
 
+            <a href="admin_maintenance_update.jsp" class="card">
+
+                <div class="card-number">
+                    05
+                </div>
+
+                <h3>
+                    Maintenance Details
+                </h3>
+
+                <p>
+                    View maintenance information of vehicles.
+                </p>
+
+            </a>
 
             <a href="Admin?action=commission" class="card">
 
                 <div class="card-number">
-                    05
+                    06
                 </div>
 
                 <h3>
@@ -658,7 +673,7 @@ body {
             <a href="Admin?action=platformfeed" class="card">
 
                 <div class="card-number">
-                    06
+                    07
                 </div>
 
                 <h3>
@@ -671,24 +686,6 @@ body {
 
             </a>
 
-
-            <a href="admin_maintenance_update.jsp" class="card">
-
-                <div class="card-number">
-                    07
-                </div>
-
-                <h3>
-                    Maintenance Details
-                </h3>
-
-                <p>
-                    View maintenance information of vehicles.
-                </p>
-
-            </a>
-
-
         </div>
 
 
@@ -699,9 +696,7 @@ body {
 
             <p>
                 CARVERSE ADMINISTRATION
-            </p>
-
-            
+            </p>  
 
         </div>
 

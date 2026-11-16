@@ -194,7 +194,6 @@
 .compare-strip {
   background: var(--deep);
   color: #fff;
-  padding: 68px 0;
 }
 
 .compare-strip h2 {
@@ -202,12 +201,22 @@
   margin: 8px 0;
 }
 
-.compare-grid {
-  display: grid;
-  grid-template-columns: 1.2fr .8fr .8fr .8fr 1.6fr;
-  gap: 12px;
-  margin-top: 28px;
-  align-items: stretch;
+.compare-container {
+  display: flex;
+  margin: auto;
+  justify-content: center;
+  gap: 2rem;
+  padding: 0 10px;
+}
+
+.compare-shell {
+  display: flex;
+    flex-direction: column;
+    max-width: max-content;
+    margin: 0px;
+    padding: 0 10px;
+    justify-content: center;
+    gap: 1rem;
 }
 
 .compare-intro {
@@ -225,7 +234,7 @@
 .compare-visual img {
   display: block;
   width: 100%;
-  max-height: 205px;
+  max-height: 400px;
   object-fit: contain;
   object-position: right center;
 }

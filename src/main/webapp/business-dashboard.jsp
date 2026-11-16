@@ -241,33 +241,6 @@
         <span class="btn btn-primary" style="font-size:12px;padding:8px 14px;width:fit-content;">Open →</span>
       </a>
 
-      <a class="action-card" href="BusinessBookings" style="text-decoration:none;color:inherit;">
-        <div class="ac-icon">↩️</div>
-        <h3>Cancellation Requests</h3>
-        <p>Review and respond to cancellation requests from customers.</p>
-        <% if (dashPendingCancels > 0) { %>
-        <span style="font-size:12px;font-weight:900;color:#92400e;background:#fef9c3;border-radius:99px;padding:4px 12px;width:fit-content;">
-          <%= dashPendingCancels %> pending
-        </span>
-        <% } else { %>
-        <span class="btn btn-primary" style="font-size:12px;padding:8px 14px;width:fit-content;">Open →</span>
-        <% } %>
-      </a>
-
-      <a class="action-card" href="BusinessEarnings" style="text-decoration:none;color:inherit;">
-        <div class="ac-icon">💰</div>
-        <h3>Commission &amp; Earnings</h3>
-        <p>View commission breakdowns, payout history and earning reports.</p>
-        <span class="btn btn-primary" style="font-size:12px;padding:8px 14px;width:fit-content;">Open →</span>
-      </a>
-
-      <a class="action-card" href="BusinessProfile" style="text-decoration:none;color:inherit;">
-        <div class="ac-icon">🏢</div>
-        <h3>Business Profile</h3>
-        <p>Update your business information, contact details and branding.</p>
-        <span class="btn btn-primary" style="font-size:12px;padding:8px 14px;width:fit-content;">Open →</span>
-      </a>
-
     </div>
 
   </div><%-- .shell --%>
