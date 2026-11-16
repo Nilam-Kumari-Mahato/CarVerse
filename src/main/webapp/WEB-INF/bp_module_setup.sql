@@ -10,16 +10,8 @@
 -- -----------------------------------------------------------------------------
 -- 1. Add cancellation columns to BOOKING_DETAILS
 --    (safe to re-run — ALTER TABLE is skipped if the column already exists)
+--    NOTE: CANCELLATION_REASON was removed from the schema; not added here.
 -- -----------------------------------------------------------------------------
-
-BEGIN
-  EXECUTE IMMEDIATE
-    'ALTER TABLE BOOKING_DETAILS ADD CANCELLATION_REASON VARCHAR2(500)';
-EXCEPTION
-  WHEN OTHERS THEN
-    IF SQLCODE != -1430 THEN RAISE; END IF;  -- -1430 = column already exists
-END;
-/
 
 BEGIN
   EXECUTE IMMEDIATE

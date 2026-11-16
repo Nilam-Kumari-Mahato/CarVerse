@@ -406,6 +406,164 @@
             display: block;
         }
 
+        /* ================= CANCEL BOOKING ================= */
+
+        .booking-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .cancel-status-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .badge-none       { background: #f1f3f0; color: var(--grey); }
+        .badge-requested  { background: #fff3cd; color: #856404; }
+        .badge-approved   { background: #d1e7dd; color: #0a3622; }
+        .badge-rejected   { background: #f8d7da; color: #58151c; }
+
+        .cancel-booking-btn {
+            background: transparent;
+            color: #dc3545;
+            border: 1.5px solid #dc3545;
+            padding: 7px 16px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            white-space: nowrap;
+        }
+
+        .cancel-booking-btn:hover {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .cancel-booking-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* ================= CANCEL CONFIRMATION MODAL ================= */
+
+        .confirm-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.55);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .confirm-popup {
+            position: relative;
+            width: 400px;
+            max-width: 92%;
+            background: #fff;
+            border-radius: 14px;
+            padding: 30px 28px 24px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+            animation: popupAnimation 0.25s ease;
+        }
+
+        .confirm-popup h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #dc3545;
+        }
+
+        .confirm-popup p {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        .confirm-popup .confirm-bid {
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .confirm-popup .confirm-note {
+            font-size: 12px;
+            color: var(--grey);
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .confirm-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .confirm-cancel-btn {
+            background: #e9ecef;
+            color: #333;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 7px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .confirm-cancel-btn:hover { background: #dee2e6; }
+
+        .confirm-proceed-btn {
+            background: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 7px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+
+        .confirm-proceed-btn:hover { background: #b02a37; }
+
+        /* ================= TOAST NOTIFICATION ================= */
+
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            padding: 13px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            z-index: 11000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            max-width: 320px;
+        }
+
+        .toast.show { opacity: 1; }
+        .toast-success { background: #198754; }
+        .toast-warn    { background: #856404; }
+        .toast-error   { background: #dc3545; }
+
         /* ================= RESPONSIVE ================= */
 
         @media(max-width: 800px) {
@@ -548,6 +706,32 @@
                             <div class="detail-value"><%= booking.getDropLocation() %></div>
                         </div>
 
+                        <%
+                            String cancelStatus = booking.getCancellationStatus();
+                            if (cancelStatus == null) cancelStatus = "NONE";
+                            String badgeClass;
+                            String badgeLabel;
+                            switch (cancelStatus) {
+                                case "REQUESTED": badgeClass = "badge-requested"; badgeLabel = "Cancellation Requested"; break;
+                                case "APPROVED":  badgeClass = "badge-approved";  badgeLabel = "Cancellation Approved";  break;
+                                case "REJECTED":  badgeClass = "badge-rejected";  badgeLabel = "Cancellation Rejected";  break;
+                                default:          badgeClass = "badge-none";      badgeLabel = "Active";                 break;
+                            }
+                            boolean canRequestCancel = "NONE".equals(cancelStatus);
+                        %>
+
+                        <div class="booking-footer">
+                            <span class="cancel-status-badge <%= badgeClass %>"><%= badgeLabel %></span>
+                            <% if (canRequestCancel) { %>
+                            <button
+                                type="button"
+                                class="cancel-booking-btn"
+                                onclick="openCancelConfirm('<%= booking.getBookingId() %>')">
+                                Cancel Booking
+                            </button>
+                            <% } %>
+                        </div>
+
                     </div>
 
         <%
@@ -618,6 +802,24 @@
 
 </div>
 
+<!-- ================= CANCEL CONFIRMATION MODAL ================= -->
+
+<div id="cancelConfirmModal" class="confirm-modal">
+    <div class="confirm-popup">
+        <h3>Cancel Booking?</h3>
+        <p>Are you sure you want to cancel booking <span class="confirm-bid" id="confirmBookingId"></span>?</p>
+        <p class="confirm-note">Your cancellation request will be sent to the business partner for approval.</p>
+        <div class="confirm-actions">
+            <button type="button" class="confirm-cancel-btn" onclick="closeCancelConfirm()">No, Keep It</button>
+            <button type="button" class="confirm-proceed-btn" onclick="proceedCancel()">Yes, Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- ================= TOAST NOTIFICATION ================= -->
+
+<div id="toast" class="toast"></div>
+
 <script>
 
     function openFeedbackPopup() {
@@ -632,13 +834,7 @@
         status.textContent = "";
     }
 
-    // close when clicking outside the popup box
-    window.onclick = function(event) {
-        var modal = document.getElementById("feedbackModal");
-        if (event.target === modal) {
-            closeFeedbackPopup();
-        }
-    };
+    // close when clicking outside the popup box — handled by window.addEventListener below
 
     // submit via fetch so the page doesn't navigate away to a blank "success" page
     document.getElementById("feedbackForm").addEventListener("submit", function(e) {
@@ -689,6 +885,81 @@
             status.textContent = "Network error. Please try again.";
         });
     });
+
+    // ================= CANCEL BOOKING CONFIRMATION + SUBMISSION =================
+
+    let selectedBookingId = null;
+
+    function openCancelConfirm(bookingId) {
+        selectedBookingId = bookingId;
+        document.getElementById("confirmBookingId").textContent = bookingId;
+        document.getElementById("cancelConfirmModal").style.display = "flex";
+    }
+
+    function closeCancelConfirm() {
+        document.getElementById("cancelConfirmModal").style.display = "none";
+        selectedBookingId = null;
+    }
+
+    function proceedCancel() {
+        if (!selectedBookingId) return;
+
+        var form = document.createElement("form");
+        form.method = "POST";
+        form.action = "view_profile";
+
+        var actionInput = document.createElement("input");
+        actionInput.type = "hidden";
+        actionInput.name = "action";
+        actionInput.value = "cancelBooking";
+        form.appendChild(actionInput);
+
+        var bidInput = document.createElement("input");
+        bidInput.type = "hidden";
+        bidInput.name = "bookingId";
+        bidInput.value = selectedBookingId;
+        form.appendChild(bidInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    // Close modal when clicking outside
+    window.addEventListener("click", function(event) {
+        var feedbackModal = document.getElementById("feedbackModal");
+        var cancelModal   = document.getElementById("cancelConfirmModal");
+        if (event.target === feedbackModal) {
+            closeFeedbackPopup();
+        }
+        if (event.target === cancelModal) {
+            closeCancelConfirm();
+        }
+    });
+
+    // ================= TOAST NOTIFICATION =================
+
+    function showToast(message, type) {
+        var toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.className = "toast show toast-" + type;
+        setTimeout(function() {
+            toast.className = "toast";
+        }, 4000);
+    }
+
+    // Check URL params for cancel action result
+    (function() {
+        var params = new URLSearchParams(window.location.search);
+        var cancelResult = params.get("cancel");
+        var bid = params.get("bid");
+        if (cancelResult === "success") {
+            showToast("Cancellation request submitted for booking " + (bid || ""), "success");
+        } else if (cancelResult === "already") {
+            showToast("Booking " + (bid || "") + " already has a cancellation request.", "warn");
+        } else if (cancelResult === "error") {
+            showToast("Failed to submit cancellation request. Try again.", "error");
+        }
+    })();
 
 </script>
 

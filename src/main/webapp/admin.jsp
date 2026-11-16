@@ -604,7 +604,7 @@ body {
             </a>
 
 
-            <a href="Admin?action=cars" class="card highlight">
+            <a href="Admin?action=cars" class="card">
 
                 <div class="card-number">
                     03

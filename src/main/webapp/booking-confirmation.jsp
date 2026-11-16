@@ -139,7 +139,7 @@
         </div>
 
         <a class="btn-primary" href="<%= request.getContextPath() %>/index.jsp">
-            Back to Home →
+            Back to Home
         </a>
 
     </div>
