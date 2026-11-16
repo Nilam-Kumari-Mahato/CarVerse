@@ -18,7 +18,7 @@ import java.io.IOException;
  *   GET (default) — load earnings summary + detail, forward to earnings.jsp
  *
  * All monetary values are calculated server-side via BusinessDAO.getEarningsSummary().
- * The commission rate is read from COMMISSION_CONFIG (not hardcoded).
+ * The commission rate is read from COMMISSION_CONFIG.
  *
  * Auth: validates BUSINESS_ID + USER_ROLE == "BUSINESS_PARTNER" from session.
  */

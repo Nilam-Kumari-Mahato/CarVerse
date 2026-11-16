@@ -111,6 +111,30 @@
 
     @media (max-width: 700px) { .bc-body { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 480px) { .bc-body { grid-template-columns: 1fr; } }
+
+    /* ── Booking status update section ────────────────────────── */
+    .update-section {
+      border-top: 1px solid var(--line);
+      padding: 12px 20px;
+      background: #f9fcf5;
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .update-section label {
+      font-size: 11px; font-weight: 900; text-transform: uppercase;
+      letter-spacing: .6px; color: var(--muted); white-space: nowrap;
+    }
+    .update-select {
+      padding: 7px 11px; border: 1px solid var(--line); border-radius: 7px;
+      font-size: 13px; font-family: inherit; background: #fff;
+      color: var(--ink); outline: none; cursor: pointer;
+    }
+    .update-select:focus { border-color: #8bd024; box-shadow: 0 0 0 3px rgba(139,208,36,.15); }
+    .btn-update-status {
+      padding: 7px 16px; background: var(--deep); color: #fff;
+      border: none; border-radius: 7px; font-size: 12px; font-weight: 800;
+      cursor: pointer; white-space: nowrap;
+    }
+    .btn-update-status:hover { background: #2a4a3f; }
   </style>
 </head>
 <body>
@@ -282,6 +306,25 @@
         <% if ("APPROVED".equals(b.cancellationStatus) || "REJECTED".equals(b.cancellationStatus)) { %>
         <div style="padding: 10px 20px; background: #f9fcf5; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted);">
           Cancellation <%= b.cancellationStatus.toLowerCase() %> on <%= b.cancellationDate %>.
+        </div>
+        <% } %>
+
+        <!-- ── Booking status update ────────────────────────────── -->
+        <% if (!"CANCELLED".equals(b.bookingStatus)) { %>
+        <div class="update-section">
+          <label for="status-<%= b.bookingId %>">Update Status:</label>
+          <form action="BusinessBookings" method="post" style="margin:0;display:flex;align-items:center;gap:8px;"
+                onsubmit="return confirm('Update booking <%= b.bookingId %> status?');">
+            <input type="hidden" name="action"    value="updateBookingStatus">
+            <input type="hidden" name="bookingId" value="<%= b.bookingId %>">
+            <select name="newStatus" id="status-<%= b.bookingId %>" class="update-select">
+              <option value="Pending"   <%= "Pending".equalsIgnoreCase(b.bookingStatus)   ? "selected" : "" %>>Pending</option>
+              <option value="CONFIRMED" <%= "CONFIRMED".equalsIgnoreCase(b.bookingStatus) ? "selected" : "" %>>Confirmed</option>
+              <option value="COMPLETED" <%= "COMPLETED".equalsIgnoreCase(b.bookingStatus) ? "selected" : "" %>>Completed</option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
+            <button type="submit" class="btn-update-status">Update</button>
+          </form>
         </div>
         <% } %>
 

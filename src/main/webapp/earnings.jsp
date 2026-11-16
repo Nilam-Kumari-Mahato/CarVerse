@@ -137,7 +137,7 @@
       <div class="earn-card">
         <div class="ec-label">Gross Booking Amount</div>
         <div class="ec-value">₹<%= String.format("%,.0f", s.grossAmount) %></div>
-        <div class="ec-note">Sum of all non-cancelled bookings</div>
+        <div class="ec-note">Sum of completed bookings</div>
       </div>
       <div class="earn-card highlight">
         <div class="ec-label">Your Net Earnings</div>
@@ -145,14 +145,14 @@
         <div class="ec-note">After <%= String.format("%.1f", s.commissionRate) %>% platform commission</div>
       </div>
       <div class="earn-card">
-        <div class="ec-label">Completed Amount</div>
-        <div class="ec-value">₹<%= String.format("%,.0f", s.completedAmount) %></div>
-        <div class="ec-note">From completed bookings only</div>
+        <div class="ec-label">Completed Bookings</div>
+        <div class="ec-value"><%= s.completedBookings %></div>
+        <div class="ec-note">Bookings counted in revenue</div>
       </div>
       <div class="earn-card">
-        <div class="ec-label">Pending Amount</div>
-        <div class="ec-value">₹<%= String.format("%,.0f", s.pendingAmount) %></div>
-        <div class="ec-note">Bookings in progress</div>
+        <div class="ec-label">In-Progress Bookings</div>
+        <div class="ec-value"><%= s.pendingBookings %></div>
+        <div class="ec-note">Not yet counted in revenue</div>
       </div>
       <div class="earn-card">
         <div class="ec-label">Platform Commission</div>
@@ -178,9 +178,10 @@
       </div>
       <div class="comm-note">
         * Commission rate of <strong><%= String.format("%.2f", s.commissionRate) %>%</strong>
-        is read from the platform's commission configuration table.
-        Calculated values are based on BOOKING_DETAILS; completed payouts are sourced
-        from COMMISSION_DETAILS when available.
+        is read from the platform's commission configuration in COMMISSION_DETAILS.
+        All figures are based on <strong>completed bookings only</strong>.
+        Stored commission rows from COMMISSION_DETAILS are used when available;
+        otherwise the amount is calculated on-the-fly from the rate.
       </div>
     </div>
 
@@ -208,21 +209,20 @@
             <th>Booking ID</th>
             <th>Customer</th>
             <th>Car</th>
-            <th>Start Date</th>
-            <th>End Date</th>
+            <th>Booking Date</th>
+            <th>Pickup</th>
+            <th>Drop</th>
             <th>Gross (₹)</th>
             <th>Commission (₹)</th>
             <th>Net (₹)</th>
             <th>Status</th>
-            <th>Payment</th>
+            <th>Commission Status</th>
           </tr>
         </thead>
         <tbody>
           <%
-            double commRate = (s != null) ? s.commissionRate : 15.0;
             for (BookingRecord b : detail) {
-              double comm = b.totalAmount * (commRate / 100.0);
-              double net  = b.totalAmount - comm;
+              double net  = b.totalAmount - b.commissionAmount;
               String bBadge;
               switch (b.bookingStatus == null ? "" : b.bookingStatus) {
                 case "COMPLETED":  bBadge = "badge-completed"; break;
@@ -230,19 +230,23 @@
                 case "PENDING":    bBadge = "badge-pending";   break;
                 default:           bBadge = "badge-na";
               }
-              String pBadge = "PAID".equals(b.paymentStatus) ? "badge-paid" : "badge-na";
+              String csBadge = "Pending".equals(b.commissionStatus) ? "badge-pending"
+                             : "Paid".equals(b.commissionStatus)    ? "badge-paid"
+                             : "badge-na";
+              String csLabel = b.commissionStatus != null ? b.commissionStatus : "—";
           %>
           <tr>
             <td><strong><%= b.bookingId %></strong></td>
             <td><%= b.customerName %></td>
             <td><%= b.carName %></td>
-            <td><%= b.startDate %></td>
-            <td><%= b.endDate %></td>
+            <td><%= b.bookingDate %></td>
+            <td><%= b.pickupLocation == null ? "—" : b.pickupLocation %></td>
+            <td><%= b.dropLocation   == null ? "—" : b.dropLocation   %></td>
             <td><%= String.format("%,.2f", b.totalAmount) %></td>
-            <td style="color:#b91c1c;"><%= String.format("%,.2f", comm) %></td>
+            <td style="color:#b91c1c;"><%= String.format("%,.2f", b.commissionAmount) %></td>
             <td style="color:#15803d;font-weight:700;"><%= String.format("%,.2f", net) %></td>
             <td><span class="badge <%= bBadge %>"><%= b.bookingStatus %></span></td>
-            <td><span class="badge <%= pBadge %>"><%= b.paymentStatus %></span></td>
+            <td><span class="badge <%= csBadge %>"><%= csLabel %></span></td>
           </tr>
           <% } %>
         </tbody>

@@ -159,8 +159,8 @@
         <!-- COMPARE SECTION -->
 
         <section class="compare-strip" id="compare">
-
-            <div class="shell">
+            <div class="compare-container">
+            <div class="compare-shell">
 
                 <div class="eyebrow">
                     Side by side, made simple
@@ -173,34 +173,14 @@
                     that make the difference.
                 </p>
 
-
-                <div class="compare-grid">
-                    <div class="compare-intro">
+                <div class="compare-intro">
                         <a class="btn btn-primary" href="compare.jsp">Build a comparison →</a>
                     </div>
-
-
-                    <div class="mini">
-                        <b>Price</b>
-                        Ex-showroom & on-road
                     </div>
 
-
-                    <div class="mini">
-                        <b>Range</b>
-                        Real-world efficiency
-                    </div>
-
-
-                    <div class="mini">
-                        <b>Safety</b>
-                        Features & ratings
-                    </div>
-
-                    <div class="compare-visual">
+                <div class="compare-visual">
                         <img src="assets/images/car-compare.png" alt="Two cars side by side">
                     </div>
-                </div>
 
             </div>
 
