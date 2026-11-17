@@ -98,12 +98,12 @@
     private String val(String s) {
         return (s != null && !s.trim().isEmpty()) ? s.trim() : "—";
     }
-    private String firstImg(String images) {
+    private String firstImg(String images, String contextPath) {
         if (images != null && !images.trim().isEmpty()) {
             String[] parts = images.split(",");
             if (parts.length > 0 && !parts[0].trim().isEmpty()) return parts[0].trim();
         }
-        return request.getContextPath() + "/assets/images/car-placeholder.jpg";
+        return contextPath + "/assets/images/car-placeholder.jpg";
     }
 %>
 <!DOCTYPE html>
@@ -493,7 +493,7 @@
                 String removeBtnStyle = (currentCar == null) ? "display:none;" : "";
                 String emptyViewStyle = (currentCar != null) ? "display:none;" : "";
                 String filledViewStyle = (currentCar == null) ? "display:none;" : "";
-                String currentImg = (currentCar != null) ? firstImg(currentCar.getImages()) : request.getContextPath() + "/assets/images/car-placeholder.jpg";
+                String currentImg = (currentCar != null) ? firstImg(currentCar.getImages(), request.getContextPath()) : request.getContextPath() + "/assets/images/car-placeholder.jpg";
                 String currentTitle = (currentCar != null) ? currentCar.getModelName() : "";
                 String currentPrice = (currentCar != null) ? ("₹ " + val(currentCar.getPriceRange())) : "";
             %>
@@ -601,7 +601,7 @@
                 <% for (CarModel car : activeCompareCars) { %>
                 <td style="background:#fff;padding:18px 14px;">
                   <div class="table-car-head">
-                    <img src="<%= (firstImg(car.getImages()).startsWith("/") || firstImg(car.getImages()).matches("(?i)^[a-z][a-z0-9+.-]*:.*")) ? firstImg(car.getImages()) : request.getContextPath() + "/" + firstImg(car.getImages()) %>" alt="<%= car.getModelName() %>">
+                    <img src="<%= (firstImg(car.getImages(), request.getContextPath()).startsWith("/") || firstImg(car.getImages(), request.getContextPath()).matches("(?i)^[a-z][a-z0-9+.-]*:.*")) ? firstImg(car.getImages(), request.getContextPath()) : request.getContextPath() + "/" + firstImg(car.getImages(), request.getContextPath()) %>" alt="<%= car.getModelName() %>">
                     <h3><%= car.getModelName() %></h3>
                     <div class="price">₹ <%= val(car.getPriceRange()) %><sup>*</sup></div>
                     <div class="car-actions">
@@ -796,7 +796,7 @@
         bodyType: "<%= c.getBodyType() != null ? c.getBodyType().replace("\"", "\\\"") : "" %>",
         price: "<%= c.getPriceRange() != null ? c.getPriceRange().replace("\"", "\\\"") : "" %>",
         fuel: "<%= c.getFuelTypes() != null ? c.getFuelTypes().replace("\"", "\\\"") : "" %>",
-        image: "<%= firstImg(c.getImages()) %>"
+        image: "<%= firstImg(c.getImages(), request.getContextPath()) %>"
       }<%= i < allCars.size() - 1 ? "," : "" %>
       <% } %>
     };

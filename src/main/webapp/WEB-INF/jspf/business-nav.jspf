@@ -9,7 +9,7 @@
             <a class="active" href="<%= request.getContextPath() %>/business-partners/business-dashboard.jsp">Dashboard</a>
         </div>
 
-        <a href="BusinessProfile"><span class="user-name" style="cursor:inherit;"><%= businessName %></span></a>
+        <a href="<%= request.getContextPath() %>/BusinessProfile"><span class="user-name" style="cursor:inherit;"><%= businessName %></span></a>
         <form action="<%= request.getContextPath() %>/BusinessLogout" method="post" style="margin:0;">
             <button class="btn btn-outline" type="submit">Sign out</button>
         </form>
