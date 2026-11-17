@@ -29,6 +29,12 @@ CarVerse lets users explore cars across multiple categories, compare specificati
 
 Setup instructions coming soon.
 
+## Password security setup
+
+Run `src/main/webapp/WEB-INF/password_security_migration.sql` once as the `CARVERSE` schema owner. It widens the customer password column; existing customer plaintext passwords and older business hashes upgrade to PBKDF2 after successful login.
+
+Demo password recovery accepts account email and new password directly. It does not send email or verify email ownership. Do not use this recovery flow in production. Passwords are stored as PBKDF2 hashes.
+
 ## License
 
 This project is for educational purposes.

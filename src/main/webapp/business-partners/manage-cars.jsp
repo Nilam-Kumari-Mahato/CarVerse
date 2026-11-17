@@ -237,7 +237,7 @@
             <label>Price Range *</label>
             <input type="text" name="priceRange"
                    value="<%= editCar.getPriceRange() == null ? "" : editCar.getPriceRange() %>"
-                   placeholder="e.g. ₹2,000 - ₹3,000 / day" required>
+                   placeholder="e.g. 12.4 - 15.7 Lakh" required>
           </div>
           <div class="field-wrap full-span">
             <label>Image URLs (comma-separated)</label>

@@ -51,7 +51,7 @@ public class User_feed extends HttpServlet {
             try (Connection con = DriverManager.getConnection(
                         "jdbc:oracle:thin:@localhost:1521:XE", "CARVERSE", "manager")) {
 
-                String q1 = "INSERT INTO PLATFORM_FEED (FEED_ID, USER_ID, TITLE, CONTENT) "
+                String q1 = "INSERT INTO PLATFORM_FEED (PLATFORM_FEED_ID, USER_ID, TITLE, CONTENT) "
                            + "VALUES (?, ?, ?, ?)";
 
                 try (PreparedStatement pstmt = con.prepareStatement(q1)) {

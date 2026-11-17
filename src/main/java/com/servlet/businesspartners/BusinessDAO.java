@@ -1,8 +1,6 @@
 package com.servlet.businesspartners;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import com.carverse.security.PasswordUtil;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -24,8 +22,7 @@ import java.util.List;
  *   4. BOOKING_DETAILS    — bookings per partner + cancellation handling
  *   5. COMMISSION_DETAILS / BOOKING_DETAILS — earnings
  *
- * Password security:
- *   16-byte SecureRandom salt → SHA-256(salt + password) → stored as saltHex:hashHex
+ * Password security uses PBKDF2-HMAC-SHA256 through PasswordUtil.
  */
 public class BusinessDAO {
 
@@ -52,45 +49,17 @@ public class BusinessDAO {
     // =======================================================================
 
     // -----------------------------------------------------------------------
-    // Password hashing  (salt:hash stored in DB)
+    // Password hashing
     // -----------------------------------------------------------------------
 
-    /** Generates a salted SHA-256 hash of the plain-text password. */
+    /** Hashes a password using PBKDF2-HMAC-SHA256. */
     public String hashPassword(String plainPassword) {
-        try {
-            SecureRandom sr = new SecureRandom();
-            byte[] saltBytes = new byte[16];
-            sr.nextBytes(saltBytes);
-            String saltHex = bytesToHex(saltBytes);
-            String hashHex = sha256Hex(saltHex + plainPassword);
-            return saltHex + ":" + hashHex;
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("SHA-256 not available", e);
-        }
+        return PasswordUtil.hashPassword(plainPassword);
     }
 
-    /** Verifies a plain-text password against the stored saltHex:hashHex value. */
+    /** Supports current PBKDF2 hashes and legacy business hashes during migration. */
     public boolean verifyPassword(String plainPassword, String storedHash) {
-        try {
-            if (storedHash == null || !storedHash.contains(":")) return false;
-            String[] parts = storedHash.split(":", 2);
-            String actualHash = sha256Hex(parts[0] + plainPassword);
-            return actualHash.equals(parts[1]);
-        } catch (NoSuchAlgorithmException e) {
-            return false;
-        }
-    }
-
-    private String sha256Hex(String input) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        byte[] digest = md.digest(input.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-        return bytesToHex(digest);
-    }
-
-    private String bytesToHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder(bytes.length * 2);
-        for (byte b : bytes) sb.append(String.format("%02x", b));
-        return sb.toString();
+        return PasswordUtil.verifyPassword(plainPassword, storedHash);
     }
 
     // -----------------------------------------------------------------------
@@ -184,23 +153,41 @@ public class BusinessDAO {
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, loginEmail);
+            String businessId;
+            String businessName;
+            String brandName;
+            String storedHash;
+            String status;
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) return null;
-
-                String storedHash = rs.getString("PASSWORD_HASH");
-                String status     = rs.getString("ACCOUNT_STATUS");
-
-                if (!verifyPassword(plainPassword, storedHash)) return null;
-                if (!"ACTIVE".equals(status)) throw new AccountNotActiveException(status);
-
-                Business b = new Business();
-                b.setBusinessId(rs.getString("BUSINESS_ID"));
-                b.setBusinessName(rs.getString("BUSINESS_NAME"));
-                b.setBrandName(rs.getString("BRAND_NAME"));
-                b.setLoginEmail(loginEmail);
-                b.setAccountStatus(status);
-                return b;
+                businessId = rs.getString("BUSINESS_ID");
+                businessName = rs.getString("BUSINESS_NAME");
+                brandName = rs.getString("BRAND_NAME");
+                storedHash = rs.getString("PASSWORD_HASH");
+                status = rs.getString("ACCOUNT_STATUS");
             }
+
+            if (!verifyPassword(plainPassword, storedHash)) return null;
+            if (PasswordUtil.needsRehash(storedHash)) {
+                String upgradedHash = hashPassword(plainPassword);
+                try (PreparedStatement upgrade = con.prepareStatement(
+                        "UPDATE BUSINESS_PARTNERS SET PASSWORD_HASH = ? " +
+                        "WHERE BUSINESS_ID = ? AND PASSWORD_HASH = ?")) {
+                    upgrade.setString(1, upgradedHash);
+                    upgrade.setString(2, businessId);
+                    upgrade.setString(3, storedHash);
+                    if (upgrade.executeUpdate() != 1) return null;
+                }
+            }
+            if (!"ACTIVE".equals(status)) throw new AccountNotActiveException(status);
+
+            Business b = new Business();
+            b.setBusinessId(businessId);
+            b.setBusinessName(businessName);
+            b.setBrandName(brandName);
+            b.setLoginEmail(loginEmail);
+            b.setAccountStatus(status);
+            return b;
         }
     }
 

@@ -315,6 +315,7 @@
               <label for="password">Password <span class="req">*</span></label>
               <input class="input" id="password" name="password" type="password"
                      placeholder="Create a strong password"
+                     minlength="8" maxlength="128"
                      autocomplete="new-password" required>
               <p class="hint">Min. 8 characters with at least one letter, one number, and one special character.</p>
             </div>
@@ -357,7 +358,7 @@
   var EMAIL_RE = /^[\w.+\-]+@[\w\-]+\.[a-zA-Z]{2,}$/;
   var PHONE_RE = /^(\+91|0)?[6-9]\d{9}$/;
   var PIN_RE   = /^[1-9][0-9]{5}$/;
-  var PWD_RE   = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+  var PWD_RE   = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,128}$/;
 
   form.addEventListener('submit', function (e) {
     var errors = [];
@@ -401,7 +402,7 @@
     var cpwd = document.getElementById('confirmPassword');
     if (!pwd  || !pwd.value)  errors.push('Password is required.');
     else if (!PWD_RE.test(pwd.value))
-      errors.push('Password must be at least 8 chars with a letter, number, and special character.');
+      errors.push('Password must contain 8 to 128 characters with a letter, number, and special character.');
     if (!cpwd || !cpwd.value) errors.push('Please confirm your password.');
     else if (pwd && pwd.value && pwd.value !== cpwd.value)
       errors.push('Password and Confirm Password do not match.');

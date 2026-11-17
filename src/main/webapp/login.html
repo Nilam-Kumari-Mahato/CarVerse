@@ -46,7 +46,7 @@
               <div id="alert-box" style="display:none;" role="alert"></div>
               <div><label class="sr-only" for="email">Email address</label><input class="input" id="email" name="email" type="email" placeholder="Email address" required></div>
               <div><label class="sr-only" for="password">Password</label><input class="input" id="password" name="password" type="password" placeholder="Password" required></div>
-              <p class="form-note" style="text-align:right"><a href="#">Forgot password?</a></p>
+              <p class="form-note" style="text-align:right"><a href="user/forgot-password.jsp?accountType=USER">Forgot password?</a></p>
               <button class="btn btn-primary" type="submit">Sign in</button>
               <p class="form-note">New to CarVerse? <a href="user_registration.html">Create an account</a></p>
             </form>
@@ -64,6 +64,10 @@
             } else if (params.get('error') === 'server') {
               alertBox.className = 'alert-error';
               alertBox.textContent = 'Unable to sign in due to a server error. Please try again.';
+              alertBox.style.display = 'block';
+            } else if (params.get('passwordReset') === 'true') {
+              alertBox.className = 'alert-success';
+              alertBox.textContent = 'Your password was reset. Sign in with your new password.';
               alertBox.style.display = 'block';
             } else if (params.get('logout') === 'true') {
               alertBox.className = 'alert-success';

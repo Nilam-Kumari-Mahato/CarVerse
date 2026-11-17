@@ -541,8 +541,8 @@
                                                     </b>
                                                 </div>
 
-                                                <a class="btn btn-primary" href="<%= request.getContextPath() %>/login.html">
-                                                    Check eligibility →
+                                                <a class="btn btn-primary" href="#">
+                                                    Check eligibility
                                                 </a>
 
                                                 <p>Sign in to get personalised offers from nearby dealers.</p>

@@ -1,4 +1,5 @@
 package com.servlet.user;
+import com.carverse.security.PasswordUtil;
 import com.servlet.businesspartners.BusinessDAO;
 
 import java.io.IOException;
@@ -112,6 +113,15 @@ public class view_profile extends HttpServlet {
         String action    = request.getParameter("action");
         String bookingId = request.getParameter("bookingId");
 
+        if ("updateProfile".equals(action)) {
+            updateProfile(request, response, ses, u_id);
+            return;
+        }
+        if ("deleteAccount".equals(action)) {
+            deleteAccount(request, response, ses, u_id);
+            return;
+        }
+
         if ("cancelBooking".equals(action) && bookingId != null && !bookingId.trim().isEmpty()) {
             try {
                 BusinessDAO dao = new BusinessDAO();
@@ -128,5 +138,91 @@ public class view_profile extends HttpServlet {
         } else {
             doGet(request, response);
         }
+    }
+
+    private void updateProfile(HttpServletRequest request, HttpServletResponse response,
+                               HttpSession session, String userId) throws IOException {
+        String name = trim(request.getParameter("name"));
+        String email = trim(request.getParameter("email"));
+        String contact = trim(request.getParameter("contact"));
+        String address = trim(request.getParameter("address"));
+        if (name.isEmpty() || name.length() > 100 || email.length() > 200
+                || !email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
+                || contact.isEmpty() || contact.length() > 40
+                || address.isEmpty() || address.length() > 500) {
+            response.sendRedirect("view_profile?profile=invalid");
+            return;
+        }
+
+        String sql = "UPDATE USER_REGISTRATION SET USERNAME = ?, EMAIL = ?, CONTACT = ?, ADDRESS = ? "
+                + "WHERE USER_ID = ?";
+        try {
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+            try (Connection con = DriverManager.getConnection(
+                    "jdbc:oracle:thin:@localhost:1521:XE", "CARVERSE", "manager");
+                 PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setString(1, name);
+                ps.setString(2, email);
+                ps.setString(3, contact);
+                ps.setString(4, address);
+                ps.setString(5, userId);
+                if (ps.executeUpdate() != 1) {
+                    response.sendRedirect("view_profile?profile=error");
+                    return;
+                }
+            }
+            session.setAttribute("USERNAME", name);
+            session.setAttribute("USER_NAME", name);
+            session.setAttribute("EMAIL", email);
+            response.sendRedirect("view_profile?profile=updated");
+        } catch (SQLException e) {
+            getServletContext().log("User profile update failed.", e);
+            response.sendRedirect("view_profile?profile="
+                    + (e.getErrorCode() == 1 ? "duplicate-email" : "error"));
+        } catch (Exception e) {
+            getServletContext().log("User profile update failed.", e);
+            response.sendRedirect("view_profile?profile=error");
+        }
+    }
+
+    private void deleteAccount(HttpServletRequest request, HttpServletResponse response,
+                               HttpSession session, String userId) throws IOException {
+        String anonymizedEmail = "deleted+" + UUID.randomUUID() + "@deleted.invalid";
+        String unusablePassword = UUID.randomUUID().toString();
+        String update = "UPDATE USER_REGISTRATION SET USERNAME = 'Deleted User', EMAIL = ?, "
+                + "PASSWORD = ?, CONTACT = '0', ADDRESS = 'Removed' WHERE USER_ID = ?";
+        try {
+            String passwordHash = PasswordUtil.hashPassword(unusablePassword);
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+            try (Connection con = DriverManager.getConnection(
+                    "jdbc:oracle:thin:@localhost:1521:XE", "CARVERSE", "manager")) {
+                con.setAutoCommit(false);
+                try {
+                    try (PreparedStatement ps = con.prepareStatement(update)) {
+                        ps.setString(1, anonymizedEmail);
+                        ps.setString(2, passwordHash);
+                        ps.setString(3, userId);
+                        if (ps.executeUpdate() != 1) {
+                            con.rollback();
+                            response.sendRedirect("view_profile?profile=delete-error");
+                            return;
+                        }
+                    }
+                    con.commit();
+                } catch (Exception e) {
+                    con.rollback();
+                    throw e;
+                }
+            }
+            session.invalidate();
+            response.sendRedirect("login.html?accountDeleted=true");
+        } catch (Exception e) {
+            getServletContext().log("User account anonymization failed.", e);
+            response.sendRedirect("view_profile?profile=delete-error");
+        }
+    }
+
+    private static String trim(String value) {
+        return value == null ? "" : value.trim();
     }
 }
