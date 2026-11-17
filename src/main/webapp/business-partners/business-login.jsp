@@ -65,6 +65,7 @@
   // Query-string flags set by other servlets
   String registered = request.getParameter("registered");
   String loggedOut  = request.getParameter("logout");
+  String passwordReset = request.getParameter("passwordReset");
 
   // Error / repopulated fields set by BusinessLoginServlet on forward
   String error      = (String) request.getAttribute("error");
@@ -104,6 +105,10 @@
         <div class="alert-success" role="status">
           You have been signed out successfully.
         </div>
+      <% } else if ("true".equals(passwordReset)) { %>
+        <div class="alert-success" role="status">
+          Your password was reset. Sign in with your new password.
+        </div>
       <% } %>
 
       <%-- Error banner --%>
@@ -127,7 +132,7 @@
       </div>
 
       <p class="form-note" style="text-align:right; margin-top:10px;">
-        <a href="#" aria-label="Forgot password — coming soon" title="Coming soon">
+        <a href="<%= request.getContextPath() %>/user/forgot-password.jsp?accountType=BUSINESS">
           Forgot password?
         </a>
       </p>

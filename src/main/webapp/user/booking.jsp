@@ -8,9 +8,7 @@
     String fullName = "";
 
     if (car != null) {
-        fullName = (car.getBrand() != null ? car.getBrand() : "")
-                 + " "
-                 + (car.getModelName() != null ? car.getModelName() : "");
+        fullName = (car.getModelName() != null ? car.getModelName() : "");
         fullName = fullName.trim();
     }
 %>

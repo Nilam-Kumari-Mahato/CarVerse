@@ -4,6 +4,13 @@
 <%@ page import="com.servlet.user.load_user" %>
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.util.Locale" %>
+<%!
+    private String escapeHtml(String value) {
+        if (value == null) return "";
+        return value.replace("&", "&amp;").replace("\"", "&quot;")
+                .replace("<", "&lt;").replace(">", "&gt;").replace("'", "&#39;");
+    }
+%>
 
 <%
     load_user user = (load_user) request.getAttribute("user");
@@ -231,25 +238,57 @@
             font-size: 11px;
         }
 
-        /* ================= FEEDBACK BUTTON ================= */
+        /* ================= PROFILE ACTION MENU ================= */
 
-        .feedback-btn {
-            background-color: #198754;
-            color: white;
-            border: none;
-            padding: 11px 20px;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
+        .profile-menu { position: relative; z-index: 20; }
+        .menu-trigger {
+            display: grid;
+            place-items: center;
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            background: #fff;
+            color: var(--dark);
             cursor: pointer;
-            transition: 0.3s;
-            white-space: nowrap;
+            list-style: none;
         }
+        .menu-trigger::-webkit-details-marker { display: none; }
+        .menu-trigger:hover, .profile-menu[open] .menu-trigger { background: #f0f4e9; }
+        .menu-trigger svg { width: 20px; height: 20px; }
+        .menu-items {
+            position: absolute;
+            right: 0;
+            top: 50px;
+            width: 205px;
+            padding: 6px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            box-shadow: 0 12px 30px rgba(0,0,0,.14);
+        }
+        .menu-items button, .menu-items a {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            width: 100%;
+            padding: 11px 10px;
+            border: 0;
+            border-radius: 7px;
+            background: transparent;
+            color: var(--dark);
+            font: inherit;
+            font-size: 13px;
+            text-align: left;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .menu-items button:hover, .menu-items a:hover { background: #f3f5f1; }
+        .menu-items svg { width: 17px; height: 17px; flex: none; }
+        .menu-items .delete-action { color: #b42318; }
 
-        .feedback-btn:hover {
-            background-color: #146c43;
-            transform: translateY(-2px);
-        }
+        .profile-edit-form .form-group input { width: 100%; }
+        .delete-warning { color: #555; font-size: 13px; line-height: 1.5; }
 
         /* ================= FEEDBACK MODAL ================= */
 
@@ -270,6 +309,8 @@
             position: relative;
             width: 420px;
             max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
             background: white;
             border-radius: 14px;
             padding: 28px;
@@ -627,12 +668,33 @@
             <p>Your account details on file with CarVerse.</p>
         </div>
 
-        <button
-            type="button"
-            class="feedback-btn"
-            onclick="openFeedbackPopup()">
-            Give Feedback
-        </button>
+        <details class="profile-menu" id="profileMenu">
+            <summary class="menu-trigger" aria-label="Profile options" title="Profile options">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <circle cx="5" cy="12" r="1.8"></circle>
+                    <circle cx="12" cy="12" r="1.8"></circle>
+                    <circle cx="19" cy="12" r="1.8"></circle>
+                </svg>
+            </summary>
+            <div class="menu-items" aria-label="Profile actions">
+                <button type="button" onclick="openProfileEdit()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
+                    Edit
+                </button>
+                <button type="button" onclick="openFeedbackPopup()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg>
+                    Feedback
+                </button>
+                <a href="<%= request.getContextPath() %>/UserLogout">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg>
+                    Sign Out
+                </a>
+                <button type="button" class="delete-action" onclick="openDeleteConfirm()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m19 6-1 14H6L5 6"/><path d="M10 11v5M14 11v5"/></svg>
+                    Delete Account
+                </button>
+            </div>
+        </details>
     </div>
 
     <!-- PROFILE CARD -->
@@ -641,23 +703,23 @@
 
         <div class="card-label">Account Details</div>
 
-        <h2><%= user.getU_name() %></h2>
+        <h2><%= escapeHtml(user.getU_name()) %></h2>
 
         <div class="profile-details">
 
             <div class="detail">
                 <div class="detail-label">Email</div>
-                <div class="detail-value"><%= user.getU_email() %></div>
+                <div class="detail-value"><%= escapeHtml(user.getU_email()) %></div>
             </div>
 
             <div class="detail">
                 <div class="detail-label">Contact No.</div>
-                <div class="detail-value"><%= user.getU_cont() %></div>
+                <div class="detail-value"><%= escapeHtml(user.getU_cont()) %></div>
             </div>
 
             <div class="detail">
                 <div class="detail-label">Address</div>
-                <div class="detail-value"><%= user.getU_add() %></div>
+                <div class="detail-value"><%= escapeHtml(user.getU_add()) %></div>
             </div>
 
         </div>
@@ -757,6 +819,37 @@
 
 <!-- ================= FEEDBACK MODAL (built directly into this page) ================= -->
 
+<div id="profileEditModal" class="feedback-modal" role="dialog" aria-modal="true" aria-labelledby="profileEditTitle">
+    <div class="feedback-popup">
+        <span class="close-btn" onclick="closeProfileEdit()" aria-label="Close">&times;</span>
+        <h2 id="profileEditTitle">Edit profile</h2>
+        <p>Update your account details.</p>
+        <form class="profile-edit-form" action="<%= request.getContextPath() %>/view_profile" method="post">
+            <input type="hidden" name="action" value="updateProfile">
+            <div class="form-group">
+                <label for="profileName">Full name</label>
+                <input id="profileName" name="name" type="text" maxlength="100" value="<%= escapeHtml(user.getU_name()) %>" required>
+            </div>
+            <div class="form-group">
+                <label for="profileEmail">Email</label>
+                <input id="profileEmail" name="email" type="email" maxlength="200" value="<%= escapeHtml(user.getU_email()) %>" required>
+            </div>
+            <div class="form-group">
+                <label for="profileContact">Contact number</label>
+                <input id="profileContact" name="contact" type="tel" maxlength="40" value="<%= escapeHtml(user.getU_cont()) %>" required>
+            </div>
+            <div class="form-group">
+                <label for="profileAddress">Address</label>
+                <input id="profileAddress" name="address" type="text" maxlength="500" value="<%= escapeHtml(user.getU_add()) %>" required>
+            </div>
+            <div class="popup-buttons">
+                <button type="button" class="cancel-btn" onclick="closeProfileEdit()">Cancel</button>
+                <button type="submit" class="submit-btn">Save changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div id="feedbackModal" class="feedback-modal">
 
     <div class="feedback-popup">
@@ -802,6 +895,20 @@
 
 </div>
 
+<div id="deleteConfirmModal" class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="deleteAccountTitle">
+    <div class="confirm-popup">
+        <h3 id="deleteAccountTitle">Delete account?</h3>
+        <p class="delete-warning">Your personal profile details will be removed and sign-in disabled. Booking and feedback history will remain with your identity anonymized.</p>
+        <form action="<%= request.getContextPath() %>/view_profile" method="post">
+            <input type="hidden" name="action" value="deleteAccount">
+            <div class="confirm-actions" style="margin-top:20px">
+                <button type="button" class="confirm-cancel-btn" onclick="closeDeleteConfirm()">Keep Account</button>
+                <button type="submit" class="confirm-proceed-btn">Delete Account</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- ================= CANCEL CONFIRMATION MODAL ================= -->
 
 <div id="cancelConfirmModal" class="confirm-modal">
@@ -822,8 +929,27 @@
 
 <script>
 
+    function openProfileEdit() {
+        document.getElementById("profileMenu").open = false;
+        document.getElementById("profileEditModal").style.display = "flex";
+    }
+
+    function closeProfileEdit() {
+        document.getElementById("profileEditModal").style.display = "none";
+    }
+
     function openFeedbackPopup() {
+        document.getElementById("profileMenu").open = false;
         document.getElementById("feedbackModal").style.display = "flex";
+    }
+
+    function openDeleteConfirm() {
+        document.getElementById("profileMenu").open = false;
+        document.getElementById("deleteConfirmModal").style.display = "flex";
+    }
+
+    function closeDeleteConfirm() {
+        document.getElementById("deleteConfirmModal").style.display = "none";
     }
 
     function closeFeedbackPopup() {
@@ -928,9 +1054,13 @@
     window.addEventListener("click", function(event) {
         var feedbackModal = document.getElementById("feedbackModal");
         var cancelModal   = document.getElementById("cancelConfirmModal");
+        var profileModal  = document.getElementById("profileEditModal");
+        var deleteModal   = document.getElementById("deleteConfirmModal");
         if (event.target === feedbackModal) {
             closeFeedbackPopup();
         }
+        if (event.target === profileModal) closeProfileEdit();
+        if (event.target === deleteModal) closeDeleteConfirm();
         if (event.target === cancelModal) {
             closeCancelConfirm();
         }
@@ -950,6 +1080,12 @@
     // Check URL params for cancel action result
     (function() {
         var params = new URLSearchParams(window.location.search);
+        var profileResult = params.get("profile");
+        if (profileResult === "updated") showToast("Profile updated.", "success");
+        else if (profileResult === "duplicate-email") showToast("That email is already in use.", "error");
+        else if (profileResult === "invalid") showToast("Check profile fields and try again.", "error");
+        else if (profileResult === "error") showToast("Profile update failed. Try again.", "error");
+        else if (profileResult === "delete-error") showToast("Account could not be removed. Try again.", "error");
         var cancelResult = params.get("cancel");
         var bid = params.get("bid");
         if (cancelResult === "success") {

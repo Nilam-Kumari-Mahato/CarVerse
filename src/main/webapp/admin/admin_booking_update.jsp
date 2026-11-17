@@ -229,7 +229,7 @@
 
             <label for="status">New Booking Status</label>
             <select id="status" name="status">
-                <option value="Pending"   <%= "Pending".equalsIgnoreCase(currentBookingStatus)   ? "selected" : "" %>>Pending</option>
+                <option value="PENDING"   <%= "PENDING".equalsIgnoreCase(currentBookingStatus)   ? "selected" : "" %>>Pending</option>
                 <option value="CONFIRMED" <%= "CONFIRMED".equalsIgnoreCase(currentBookingStatus) ? "selected" : "" %>>Confirmed</option>
                 <option value="COMPLETED" <%= "COMPLETED".equalsIgnoreCase(currentBookingStatus) ? "selected" : "" %>>Completed</option>
                 <option value="CANCELLED" <%= "CANCELLED".equalsIgnoreCase(currentBookingStatus) ? "selected" : "" %>>Cancelled</option>
@@ -237,8 +237,8 @@
 
             <% if (hasPendingCancelRequest) { %>
             <div class="cancel-note">
-                ⚠ This booking has a pending cancellation request from the user.
-                Setting status to <strong>CANCELLED</strong> will automatically approve it.
+                This booking has a pending cancellation request. Pending keeps it requested;
+                Confirmed or Completed rejects it; Cancelled approves it.
             </div>
             <% } %>
 

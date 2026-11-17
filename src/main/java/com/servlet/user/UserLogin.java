@@ -1,5 +1,6 @@
 package com.servlet.user;
 
+import com.carverse.security.PasswordUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -103,50 +104,69 @@ public class UserLogin extends HttpServlet {
 
         email = email.trim();
 
-        String sql = "SELECT USER_ID, USERNAME, EMAIL FROM USER_REGISTRATION WHERE LOWER(TRIM(EMAIL)) = LOWER(?) AND PASSWORD = ?";
+        String sql = "SELECT USER_ID, USERNAME, EMAIL, PASSWORD FROM USER_REGISTRATION " +
+                "WHERE LOWER(TRIM(EMAIL)) = LOWER(?)";
 
         try (Connection con = getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, email);
-            ps.setString(2, password);
 
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    String userId = rs.getString("USER_ID");
-                    String userName = rs.getString("USERNAME");
-                    String userEmail = rs.getString("EMAIL");
-
-                    // Session Fixation Defense: Invalidate existing session if present
-                    HttpSession oldSession = request.getSession(false);
-                    if (oldSession != null) {
-                        oldSession.invalidate();
-                    }
-
-                    // Create new session via HttpSession
-                    HttpSession session = request.getSession(true);
-
-                    // Set standard session attributes used across CarVerse
-                    session.setAttribute(SESS_USER_ID, userId);
-                    session.setAttribute(SESS_USER_NAME, userName);
-
-                    // Set alternate attributes for full compatibility
-                    session.setAttribute(SESS_UID_ALT, userId);
-                    session.setAttribute(SESS_UNAME_ALT, userName);
-                    session.setAttribute(SESS_EMAIL, userEmail);
-                    session.setAttribute(SESS_ROLE, ROLE_CUSTOMER);
-
-                    // 30 minutes inactivity timeout
-                    session.setMaxInactiveInterval(30 * 60);
-
-                    // Redirect to home page
-                    response.sendRedirect(getServletContext().getContextPath() + "/user/index.jsp");
-                    return;
-                } else {
-                    // Invalid credentials
+                if (!rs.next()) {
                     response.sendRedirect("login.html?error=invalid");
                     return;
                 }
+                String userId = rs.getString("USER_ID");
+                String userName = rs.getString("USERNAME");
+                String userEmail = rs.getString("EMAIL");
+                String storedPassword = rs.getString("PASSWORD");
+                rs.close();
+
+                if (!PasswordUtil.verifyPassword(password, storedPassword)) {
+                    response.sendRedirect("login.html?error=invalid");
+                    return;
+                }
+                if (PasswordUtil.needsRehash(storedPassword)) {
+                    String upgradedHash = PasswordUtil.hashPassword(password);
+                    try (PreparedStatement update = con.prepareStatement(
+                            "UPDATE USER_REGISTRATION SET PASSWORD = ? " +
+                            "WHERE USER_ID = ? AND PASSWORD = ?")) {
+                        update.setString(1, upgradedHash);
+                        update.setString(2, userId);
+                        update.setString(3, storedPassword);
+                        if (update.executeUpdate() != 1) {
+                            response.sendRedirect("login.html?error=invalid");
+                            return;
+                        }
+                    }
+                }
+
+                // Session Fixation Defense: Invalidate existing session if present
+                HttpSession oldSession = request.getSession(false);
+                if (oldSession != null) {
+                    oldSession.invalidate();
+                }
+
+                // Create new session via HttpSession
+                HttpSession session = request.getSession(true);
+
+                // Set standard session attributes used across CarVerse
+                session.setAttribute(SESS_USER_ID, userId);
+                session.setAttribute(SESS_USER_NAME, userName);
+
+                // Set alternate attributes for full compatibility
+                session.setAttribute(SESS_UID_ALT, userId);
+                session.setAttribute(SESS_UNAME_ALT, userName);
+                session.setAttribute(SESS_EMAIL, userEmail);
+                session.setAttribute(SESS_ROLE, ROLE_CUSTOMER);
+
+                // 30 minutes inactivity timeout
+                session.setMaxInactiveInterval(30 * 60);
+
+                // Redirect to home page
+                response.sendRedirect(getServletContext().getContextPath() + "/user/index.jsp");
+                return;
             }
 
         } catch (SQLException e) {

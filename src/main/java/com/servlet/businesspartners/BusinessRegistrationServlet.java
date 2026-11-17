@@ -43,9 +43,9 @@ public class BusinessRegistrationServlet extends HttpServlet {
     private static final Pattern PIN_PATTERN =
         Pattern.compile("^[1-9][0-9]{5}$");
 
-    // Password: min 8 chars, at least 1 letter, 1 digit, 1 special character
+    // Password: 8 to 128 chars, at least 1 letter, 1 digit, 1 special character
     private static final Pattern PASSWORD_PATTERN =
-        Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,}$");
+        Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,128}$");
 
     // -----------------------------------------------------------------------
     // POST handler
@@ -208,7 +208,7 @@ public class BusinessRegistrationServlet extends HttpServlet {
                                    return "Login Email is not a valid email address.";
         if (blank(password))       return "Password is required.";
         if (!PASSWORD_PATTERN.matcher(password).matches())
-                                   return "Password must be at least 8 characters and include a letter, a number, and a special character.";
+                                   return "Password must contain 8 to 128 characters and include a letter, a number, and a special character.";
         if (blank(confirmPassword)) return "Please confirm your password.";
         if (!password.equals(confirmPassword))
                                    return "Password and Confirm Password do not match.";

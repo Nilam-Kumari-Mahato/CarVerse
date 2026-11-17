@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.util.Locale;
+import java.util.Set;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,6 +20,8 @@ public class BookingStatusUpdateServlet extends HttpServlet {
     private static final String DB_URL      = "jdbc:oracle:thin:@localhost:1521:XE";
     private static final String DB_USER     = "CARVERSE";
     private static final String DB_PASSWORD = "manager";
+    private static final Set<String> BOOKING_STATUSES =
+            Set.of("PENDING", "CONFIRMED", "COMPLETED", "CANCELLED");
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -26,11 +30,16 @@ public class BookingStatusUpdateServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         String bookingId = request.getParameter("bookingId");
-        String status    = request.getParameter("status");
+        String requestedStatus = request.getParameter("status");
 
         if (bookingId == null || bookingId.trim().isEmpty()
-                || status == null || status.trim().isEmpty()) {
+                || requestedStatus == null || requestedStatus.trim().isEmpty()) {
             response.sendRedirect("Admin?action=bookings");
+            return;
+        }
+        String status = requestedStatus.trim().toUpperCase(Locale.ROOT);
+        if (!BOOKING_STATUSES.contains(status)) {
+            response.sendRedirect("Admin?action=bookings&error=true");
             return;
         }
 
@@ -39,24 +48,28 @@ public class BookingStatusUpdateServlet extends HttpServlet {
 
             try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
 
-                // Update booking status
+                // Change cancellation status only when a request is pending.
                 try (PreparedStatement ps = conn.prepareStatement(
-                        "UPDATE BOOKING_DETAILS SET BOOKING_STATUS = ? WHERE BOOKING_ID = ?")) {
-                    ps.setString(1, status.trim());
-                    ps.setString(2, bookingId.trim());
-                    ps.executeUpdate();
-                }
-
-                // If admin manually sets status to CANCELLED and a cancellation was
-                // REQUESTED by the user, automatically promote it to APPROVED.
-                if ("CANCELLED".equalsIgnoreCase(status.trim())) {
-                    try (PreparedStatement ps2 = conn.prepareStatement(
-                            "UPDATE BOOKING_DETAILS" +
-                            "   SET CANCELLATION_STATUS = 'APPROVED'," +
-                            "       CANCELLATION_DATE   = SYSDATE" +
-                            " WHERE BOOKING_ID = ? AND CANCELLATION_STATUS = 'REQUESTED'")) {
-                        ps2.setString(1, bookingId.trim());
-                        ps2.executeUpdate();
+                        "UPDATE BOOKING_DETAILS " +
+                        "SET BOOKING_STATUS = ?, " +
+                        "    CANCELLATION_STATUS = CASE " +
+                        "      WHEN UPPER(NVL(CANCELLATION_STATUS, 'NONE')) = 'REQUESTED' THEN " +
+                        "        CASE ? WHEN 'PENDING' THEN 'REQUESTED' " +
+                        "          WHEN 'CANCELLED' THEN 'APPROVED' ELSE 'REJECTED' END " +
+                        "      ELSE CANCELLATION_STATUS END, " +
+                        "    CANCELLATION_DATE = CASE " +
+                        "      WHEN UPPER(NVL(CANCELLATION_STATUS, 'NONE')) = 'REQUESTED' " +
+                        "        AND ? = 'PENDING' THEN NULL " +
+                        "      WHEN UPPER(NVL(CANCELLATION_STATUS, 'NONE')) = 'REQUESTED' THEN SYSDATE " +
+                        "      ELSE CANCELLATION_DATE END " +
+                        "WHERE BOOKING_ID = ?")) {
+                    ps.setString(1, status);
+                    ps.setString(2, status);
+                    ps.setString(3, status);
+                    ps.setString(4, bookingId.trim());
+                    if (ps.executeUpdate() != 1) {
+                        response.sendRedirect("Admin?action=bookings&error=true");
+                        return;
                     }
                 }
             }
