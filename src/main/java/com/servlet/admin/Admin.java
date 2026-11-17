@@ -647,8 +647,8 @@ public class Admin extends HttpServlet {
             else if (action.equals("platformfeed")) {
 
                 String q1 =
-                        "select platform_feed_id, user_id, company_id, " +
-                        "title, content, created_at, status " +
+                        "select platform_feed_id, user_id, " +
+                        "title, content, created_at " +
                         "from platform_feed";
 
                 ResultSet rs = stmt.executeQuery(q1);
@@ -663,11 +663,9 @@ public class Admin extends HttpServlet {
 
                 pw.println("<th>Feed ID</th>");
                 pw.println("<th>User ID</th>");
-                pw.println("<th>Company ID</th>");
                 pw.println("<th>Title</th>");
                 pw.println("<th>Content</th>");
                 pw.println("<th>Created At</th>");
-                pw.println("<th>Status</th>");
 
                 pw.println("</tr>");
 
@@ -684,10 +682,6 @@ public class Admin extends HttpServlet {
                             "</td>");
 
                     pw.println("<td>" +
-                            rs.getString("company_id") +
-                            "</td>");
-
-                    pw.println("<td>" +
                             rs.getString("title") +
                             "</td>");
 
@@ -697,10 +691,6 @@ public class Admin extends HttpServlet {
 
                     pw.println("<td>" +
                             rs.getString("created_at") +
-                            "</td>");
-
-                    pw.println("<td>" +
-                            rs.getString("status") +
                             "</td>");
 
                     pw.println("</tr>");
