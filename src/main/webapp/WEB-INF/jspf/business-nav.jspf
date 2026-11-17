@@ -1,12 +1,12 @@
 <nav class="nav">
     <div class="shell">
-        <a class="brand" href="<%= request.getContextPath() %>/index.jsp">CARVERSE</a>
+        <a class="brand" href="<%= request.getContextPath() %>/user/index.jsp">CARVERSE</a>
 
         <div class="navlinks">
-            <a href="<%= request.getContextPath() %>/index.jsp">Explore</a>
+            <a href="<%= request.getContextPath() %>/user/index.jsp">Explore</a>
             <a href="<%= request.getContextPath() %>/car-search">New Cars</a>
-            <a href="<%= request.getContextPath() %>/compare.jsp">Compare</a>
-            <a class="active" href="<%= request.getContextPath() %>/business-dashboard.jsp">Dashboard</a>
+            <a href="<%= request.getContextPath() %>/user/compare.jsp">Compare</a>
+            <a class="active" href="<%= request.getContextPath() %>/business-partners/business-dashboard.jsp">Dashboard</a>
         </div>
 
         <a href="BusinessProfile"><span class="user-name" style="cursor:inherit;"><%= businessName %></span></a>

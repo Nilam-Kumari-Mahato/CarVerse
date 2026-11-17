@@ -14,13 +14,13 @@
 %>
 <nav class="nav">
     <div class="shell">
-        <a class="brand" href="<%= request.getContextPath() %>/index.jsp">CARVERSE</a>
+        <a class="brand" href="<%= request.getContextPath() %>/user/index.jsp">CARVERSE</a>
 
         <div class="navlinks">
-            <a class="<%= sharedNavHome ? "active" : "" %>" href="<%= request.getContextPath() %>/index.jsp#hero">Explore</a>
+            <a class="<%= sharedNavHome ? "active" : "" %>" href="<%= request.getContextPath() %>/user/index.jsp#hero">Explore</a>
             <a class="<%= sharedNavCars ? "active" : "" %>" href="<%= request.getContextPath() %>/car-search">New Cars</a>
-            <a class="<%= sharedNavCompare ? "active" : "" %>" href="<%= request.getContextPath() %>/compare.jsp">Compare</a>
-            <a class="<%= sharedNavMaintenance ? "active" : "" %>" href="<%= request.getContextPath() %>/index.jsp#maintenance">Maintenance</a>
+            <a class="<%= sharedNavCompare ? "active" : "" %>" href="<%= request.getContextPath() %>/user/compare.jsp">Compare</a>
+            <a class="<%= sharedNavMaintenance ? "active" : "" %>" href="<%= request.getContextPath() %>/car-maintenance/Book_maintenance.jsp">Maintenance</a>
         </div>
 
         <% if (session.getAttribute("USERNAME") == null || session.getAttribute("USERID") == null) { %>
